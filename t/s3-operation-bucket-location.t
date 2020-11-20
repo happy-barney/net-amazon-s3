@@ -45,6 +45,8 @@ sub expect_operation_bucket_location {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Location',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?location",
 		plan => {
 			"location bucket with name" => {
 				act_arguments => [

@@ -13,6 +13,10 @@ use Shared::Examples::Net::Amazon::S3 ();
 use Shared::Examples::Net::Amazon::S3::API ();
 use Shared::Examples::Net::Amazon::S3::Client ();
 
+sub default_hostname {
+	's3.amazonaws.com';
+}
+
 sub build_default_api {
 	Shared::Examples::Net::Amazon::S3::API->_default_with_api({});
 }
@@ -57,6 +61,14 @@ sub expect_operation {
 
 			my $request_class = "$plan{expect_operation}::Request";
 			my $request = $request_class->new (s3 => build_default_api, %construct);
+			# HTTP::Request but unsigned
+			my $raw_request = $request->_build_signed_request->_build_request;
+
+			($ok, $stack) = Test::Deep::cmp_details ($raw_request->method, $plan{expect_request_method})
+				if $ok;
+
+			($ok, $stack) = Test::Deep::cmp_details ($raw_request->uri->as_string, $plan{expect_request_uri})
+				if $ok;
 
 			($ok, $stack) = Test::Deep::cmp_details (\%args, $plan{expect_arguments})
 				if $ok;

@@ -47,12 +47,14 @@ sub expect_operation_object_tags_delete {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Tags::Delete',
+		expect_request_method => 'DELETE',
 		plan => {
 			"delete tags from object" => {
 				act_arguments => [
 					bucket      => 'bucket-name',
 					key         => 'some-key',
 				],
+				expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?tagging",
 			},
 			"delete tags from object version" => {
 				act_arguments => [
@@ -60,6 +62,7 @@ sub expect_operation_object_tags_delete {
 					key         => 'some-key',
 					version_id  => 'foo',
 				],
+				expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?tagging&versionId=foo",
 			},
 		}
 }

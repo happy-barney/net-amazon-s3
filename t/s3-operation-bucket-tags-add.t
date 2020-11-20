@@ -45,6 +45,8 @@ sub expect_operation_bucket_tags_set {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Tags::Add',
+		expect_request_method => 'PUT',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?tagging",
 		plan => {
 			"set tags on bucket" => {
 				act_arguments => [

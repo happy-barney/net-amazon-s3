@@ -45,6 +45,8 @@ sub expect_operation_bucket_acl_set {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Acl::Set',
+		expect_request_method => 'PUT',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?acl",
 		plan => {
 			"set bucket acl using acl (canned)" => {
 				act_arguments => [

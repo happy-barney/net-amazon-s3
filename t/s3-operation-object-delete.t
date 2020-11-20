@@ -63,6 +63,8 @@ sub expect_operation_object_delete {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Delete',
+		expect_request_method => 'DELETE',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"delete object" => {
 				act_arguments => [

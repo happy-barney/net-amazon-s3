@@ -46,6 +46,8 @@ sub expect_operation_object_upload_create {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Upload::Create',
+		expect_request_method => 'POST',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?uploads",
 		plan => {
 			"create upload with object acl" => {
 				act_arguments => [

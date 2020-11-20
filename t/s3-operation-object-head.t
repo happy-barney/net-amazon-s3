@@ -48,6 +48,8 @@ sub expect_operation_object_head_api {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'HEAD',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"head object" => {
 				act_arguments => [
@@ -68,6 +70,8 @@ sub expect_operation_object_head_client {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'HEAD',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"fetch object" => {
 				act_arguments => [

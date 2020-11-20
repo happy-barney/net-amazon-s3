@@ -97,6 +97,8 @@ sub expect_operation_objects_list_api {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Objects::List',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?delimiter=d&marker=m&max-keys=1000&prefix=p",
 		plan => {
 			"list buckets" => {
 				act_arguments => [
@@ -114,6 +116,8 @@ sub expect_operation_objects_list_client {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Objects::List',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?delimiter=d&max-keys=1000&prefix=p",
 		plan => {
 			"list buckets" => {
 				act_arguments => [

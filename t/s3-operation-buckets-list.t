@@ -39,6 +39,8 @@ sub expect_operation_buckets_list {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Buckets::List',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://${ \ default_hostname }/",
 		plan => {
 			"list buckets" => {
 				act_arguments => [

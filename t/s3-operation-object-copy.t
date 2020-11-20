@@ -86,6 +86,8 @@ sub expect_operation_object_copy {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Add',
+		expect_request_method => 'PUT',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key",
 		plan => {
 			"copy key" => {
 				act_arguments => [
@@ -128,6 +130,8 @@ sub expect_operation_object_edit_metadata {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Add',
+		expect_request_method => 'PUT',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key",
 		plan => {
 			"copy key" => {
 				act_arguments => [

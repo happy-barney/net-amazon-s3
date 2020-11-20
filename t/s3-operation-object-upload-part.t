@@ -34,6 +34,8 @@ sub expect_operation_object_upload_part {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Upload::Part',
+		expect_request_method => 'PUT',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?partNumber=1&uploadId=42",
 		plan => {
 			"upload object part" => {
 				act_arguments => [

@@ -47,6 +47,7 @@ sub expect_operation_object_tags_set {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Tags::Add',
+		expect_request_method => 'PUT',
 		plan => {
 			"set tags on object" => {
 				act_arguments => [
@@ -54,6 +55,7 @@ sub expect_operation_object_tags_set {
 					key         => 'some-key',
 					tags        => { foo => 'bar' },
 				],
+				expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?tagging",
 			},
 			"set tags on object version" => {
 				act_arguments => [
@@ -62,6 +64,7 @@ sub expect_operation_object_tags_set {
 					version_id  => 'foo',
 					tags        => { foo => 'bar' },
 				],
+				expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?tagging&versionId=foo",
 			},
 		}
 }

@@ -180,6 +180,8 @@ sub expect_operation_object_fetch {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"fetch object" => {
 				act_arguments => [
@@ -196,6 +198,8 @@ sub expect_operation_object_fetch_content {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"fetch object content" => {
 				act_arguments => [
@@ -215,6 +219,8 @@ sub expect_operation_object_fetch_filename {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"fetch object into file" => {
 				act_arguments => [
@@ -231,6 +237,8 @@ sub expect_operation_object_fetch_callback {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'GET',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"fetch object with callback" => {
 				act_arguments => [
@@ -253,6 +261,8 @@ sub expect_operation_object_head {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
+		expect_request_method => 'HEAD',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
 		plan => {
 			"head key" => {
 				act_arguments => [

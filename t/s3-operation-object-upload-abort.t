@@ -36,6 +36,8 @@ sub expect_operation_object_upload_abort {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Upload::Abort',
+		expect_request_method => 'DELETE',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?uploadId=42",
 		plan => {
 			"abort upload" => {
 				act_arguments => [

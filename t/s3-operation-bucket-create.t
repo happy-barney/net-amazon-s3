@@ -60,6 +60,8 @@ sub expect_operation_bucket_create {
 	expect_operation_plan
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Create',
+		expect_request_method => 'PUT',
+		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/",
 		plan => {
 			"create bucket with name" => {
 				act_arguments => [
