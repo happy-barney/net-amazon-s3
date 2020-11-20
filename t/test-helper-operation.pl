@@ -116,19 +116,6 @@ sub _build_operation_request {
 	return $request_class->new (s3 => build_default_api, %args);
 }
 
-sub _build_unsigned_http_request {
-	my ($request) = @_;
-
-	my $guard = Sub::Override->new (
-		'Net::Amazon::S3::Request::_build_http_request' => sub {
-			my ($self, %params) = @_;
-			return $self->_build_signed_request (%params)->_build_request;
-		},
-	);
-
-	return $request->http_request;
-}
-
 sub _expectation {
 	my ($title, $message, $ok, $stack) = @_;
 
@@ -157,7 +144,7 @@ sub _expectation_request_method {
 	return _expectation
 		$title,
 		"Request method expectation",
-		Test::Deep::cmp_details ($args{raw_request}->method, $args{expect}),
+		Test::Deep::cmp_details ($args{request}->http_request->method, $args{expect}),
 		;
 }
 
@@ -167,7 +154,7 @@ sub _expectation_request_uri {
 	return _expectation
 		$title,
 		"Request uri expectation",
-		Test::Deep::cmp_details ($args{raw_request}->uri->as_string, $args{expect}),
+		Test::Deep::cmp_details ($args{request}->http_request->uri->as_string, $args{expect}),
 		;
 }
 
@@ -188,7 +175,7 @@ sub _expectation_request_headers {
 
 	return 1 unless $args{expect};
 
-	my %headers = _http_headers_for_test ($args{raw_request});
+	my %headers = _http_headers_for_test ($args{request}->http_request);
 
 	unless ($args{expect}->$Safe::Isa::_isa ('Test::Deep::Cmp')) {
 		for my $key (qw[ content_type content_length authorization date ]) {
@@ -222,7 +209,7 @@ sub _expectation_request_content_xml {
 
 	return 1 unless $args{expect};
 
-	my $got    = Shared::Examples::Net::Amazon::S3::Request::_canonical_xml ($args{raw_request}->content);
+	my $got    = Shared::Examples::Net::Amazon::S3::Request::_canonical_xml ($args{request}->http_request->content);
 	my $expect = Shared::Examples::Net::Amazon::S3::Request::_canonical_xml ($args{expect});
 
 	return _expectation
@@ -248,26 +235,25 @@ sub expect_operation {
 
 				my $request_class = "$plan{expect_operation}::Request";
 				my $request = _build_operation_request ($operation, %args);
-				my $raw_request = _build_unsigned_http_request ($request);
 
 				return unless _expectation_request_method       $title =>
-					raw_request => $raw_request,
-					expect      => $plan{expect_request_method},
+					request => $request,
+					expect  => $plan{expect_request_method},
 					;
 
 				return unless _expectation_request_uri          $title =>
-					raw_request => $raw_request,
-					expect      => $plan{expect_request_uri},
+					request => $request,
+					expect  => $plan{expect_request_uri},
 					;
 
 				return unless _expectation_request_headers      $title =>
-					raw_request => $raw_request,
-					expect      => $plan{expect_request_headers},
+					request => $request,
+					expect  => $plan{expect_request_headers},
 					;
 
 				return unless _expectation_request_content_xml  $title =>
-					raw_request => $raw_request,
-					expect      => $plan{expect_request_content_xml},
+					request => $request,
+					expect  => $plan{expect_request_content_xml},
 					;
 
 				return unless _expectation_request_instance $title =>
