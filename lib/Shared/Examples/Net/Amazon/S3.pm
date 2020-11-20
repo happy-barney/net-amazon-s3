@@ -174,13 +174,17 @@ sub expect_net_amazon_s3_feature {
 }
 
 sub _operation_parameters {
-	my ($params, @names) = @_;
-	my $map = {};
-	$map = shift @names if Ref::Util::is_plain_hashref ($names[0]);
+	my ($params, $operation, @names) = @_;
+
+	push @names, __PACKAGE__->can ("parameters_$operation")->();
 
 	return
-		map +( ($map->{$_} || $_) => $params->{"with_$_"} ),
-		grep exists $params->{"with_$_"},
+		map {
+			my ($param, $key) = ref $_ ? %$_ : ($_, $_);
+			exists $params->{"with_$key"}
+				? +( $param => $params->{"with_$key"} )
+				: ()
+		}
 		@names
 		;
 }

@@ -66,6 +66,8 @@ sub _mock_http_response {
 	)
 }
 
+*_operation_parameters = *Shared::Examples::Net::Amazon::S3::_operation_parameters;
+
 sub expect_signed_uri {
 	my ($title, %params) = @_;
 
@@ -107,7 +109,7 @@ sub operation_bucket_acl_get {
 
 	$self
 		->bucket ($params{with_bucket})
-		->get_acl
+		->get_acl (_operation_parameters (\%params, 'bucket_acl_get'))
 		;
 }
 
@@ -116,11 +118,7 @@ sub operation_bucket_acl_set {
 
 	$self
 		->bucket ($params{with_bucket})
-		->set_acl ({
-			(acl       => $params{with_acl})       x!! exists $params{with_acl},
-			(acl_short => $params{with_acl_short}) x!! exists $params{with_acl_short},
-			(acl_xml   => $params{with_acl_xml})   x!! exists $params{with_acl_xml},
-		})
+		->set_acl (_operation_parameters (\%params, 'bucket_acl_set'))
 		;
 }
 
@@ -128,13 +126,9 @@ sub operation_bucket_create {
 	my ($self, %params) = @_;
 
 	$self
-		->add_bucket ({
-			bucket => $params{with_bucket},
-			(acl       => $params{with_acl})       x!! exists $params{with_acl},
-			(acl_short => $params{with_acl_short}) x!! exists $params{with_acl_short},
-			(location_constraint => $params{with_region}) x!! exists $params{with_region},
-			(region => $params{with_region}) x!! exists $params{with_region},
-		})
+		->add_bucket (
+			_operation_parameters (\%params, 'bucket_create', 'bucket', { location_constraint => 'region' }),
+		)
 		;
 }
 
@@ -142,9 +136,7 @@ sub operation_bucket_delete {
 	my ($self, %params) = @_;
 
 	$self
-		->delete_bucket ({
-			bucket => $params{with_bucket},
-		})
+		->delete_bucket (_operation_parameters (\%params, 'bucket_delete', 'bucket'))
 		;
 }
 
@@ -176,7 +168,7 @@ sub operation_object_acl_get {
 
 	$self
 		->bucket ($params{with_bucket})
-		->get_acl ($params{with_key})
+		->get_acl (_operation_parameters (\%params, 'object_acl_get', 'key'))
 		;
 }
 
@@ -185,12 +177,7 @@ sub operation_object_acl_set {
 
 	$self
 		->bucket ($params{with_bucket})
-		->set_acl ({
-			key => $params{with_key},
-			(acl       => $params{with_acl})       x!! exists $params{with_acl},
-			(acl_short => $params{with_acl_short}) x!! exists $params{with_acl_short},
-			(acl_xml   => $params{with_acl_xml})   x!! exists $params{with_acl_xml},
-		})
+		->set_acl (_operation_parameters (\%params, 'object_acl_set', 'key'))
 		;
 }
 
@@ -270,11 +257,7 @@ sub operation_object_tags_add {
 
 	$self
 		->bucket ($params{with_bucket})
-		->add_tags ({
-			key  => $params{with_key},
-			tags => $params{with_tags},
-			(version_id => $params{with_version_id}) x!! defined $params{with_version_id},
-		})
+		->add_tags (_operation_parameters (\%params, 'object_tags_add', 'key')),
 		;
 }
 
@@ -292,10 +275,7 @@ sub operation_object_tags_delete {
 
 	$self
 		->bucket ($params{with_bucket})
-		->delete_tags ({
-			key  => $params{with_key},
-			(version_id => $params{with_version_id}) x!! defined $params{with_version_id},
-		})
+		->delete_tags (_operation_parameters (\%params, 'object_tags_delete', 'key'))
 		;
 }
 
