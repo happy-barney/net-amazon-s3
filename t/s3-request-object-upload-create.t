@@ -29,7 +29,7 @@ behaves_like_net_amazon_s3_request 'initiate multipart upload with deprecated ac
 
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploads',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 	expect_request_content  => '',
 );
 
@@ -41,7 +41,7 @@ behaves_like_net_amazon_s3_request 'initiate multipart upload with canned ACL' =
 
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploads',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 	expect_request_content  => '',
 );
 
@@ -53,7 +53,7 @@ behaves_like_net_amazon_s3_request 'initiate multipart upload with canned ACL co
 
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploads',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 	expect_request_content  => '',
 );
 
@@ -69,8 +69,8 @@ behaves_like_net_amazon_s3_request 'initiate multipart upload with explicit ACL'
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploads',
 	expect_request_headers  => {
-		'x-amz-grant-read'  => 'id="123", id="234"',
-		'x-amz-grant-write' => 'id="345"',
+		x_amz_grant_read  => 'id="123", id="234"',
+		x_amz_grant_write => 'id="345"',
 	},
 	expect_request_content  => '',
 );
@@ -83,7 +83,7 @@ behaves_like_net_amazon_s3_request 'initiate multipart upload with service side 
 
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploads',
-	expect_request_headers  => { 'x-amz-server-side-encryption' => 'AES256' },
+	expect_request_headers  => { x_amz_server_side_encryption => 'AES256' },
 	expect_request_content  => '',
 );
 
@@ -95,7 +95,7 @@ behaves_like_net_amazon_s3_request 'initiate multipart upload with headers' => (
 
 	expect_request_method   => 'POST',
 	expect_request_path     => 'some-bucket/some/key?uploads',
-	expect_request_headers  => { 'x-amz-meta-test' => 99 },
+	expect_request_headers  => { x_amz_meta_test => 99 },
 	expect_request_content  => '',
 );
 

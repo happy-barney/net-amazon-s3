@@ -18,7 +18,7 @@ behaves_like_net_amazon_s3_request 'delete multi object with empty keys' => (
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/?delete',
 	expect_request_headers  => superhashof ({
-		'Content-Type' => 'application/xml',
+		content_type => 'application/xml',
 	}),
 	expect_request_content  => <<'EOXML',
 <Delete xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
@@ -35,7 +35,7 @@ behaves_like_net_amazon_s3_request 'delete multi object with some keys' => (
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/?delete',
 	expect_request_headers  => superhashof ({
-		'Content-Type' => 'application/xml',
+		content_type => 'application/xml',
 	}),
 	expect_request_content  => <<'EOXML',
 <Delete xmlns="http://s3.amazonaws.com/doc/2006-03-01/">

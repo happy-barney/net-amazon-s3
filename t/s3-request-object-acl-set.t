@@ -18,7 +18,7 @@ behaves_like_net_amazon_s3_request 'set object access control with (deprecated) 
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?acl',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 );
 
 behaves_like_net_amazon_s3_request 'set object access control with canned acl' => (
@@ -29,7 +29,7 @@ behaves_like_net_amazon_s3_request 'set object access control with canned acl' =
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?acl',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 );
 
 behaves_like_net_amazon_s3_request 'set object access control with canned acl coercion' => (
@@ -40,7 +40,7 @@ behaves_like_net_amazon_s3_request 'set object access control with canned acl co
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?acl',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 );
 
 behaves_like_net_amazon_s3_request 'set object access control with explicit acl' => (
@@ -55,8 +55,8 @@ behaves_like_net_amazon_s3_request 'set object access control with explicit acl'
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?acl',
 	expect_request_headers  => {
-		'x-amz-grant-read'  => 'id="123", id="234"',
-		'x-amz-grant-write' => 'id="345"',
+		x_amz_grant_read  => 'id="123", id="234"',
+		x_amz_grant_write => 'id="345"',
 	},
 );
 

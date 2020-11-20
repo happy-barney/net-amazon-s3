@@ -30,7 +30,7 @@ behaves_like_net_amazon_s3_request 'put object with deprecated acl_short' => (
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 );
 
 behaves_like_net_amazon_s3_request 'put object with canned acl' => (
@@ -42,7 +42,7 @@ behaves_like_net_amazon_s3_request 'put object with canned acl' => (
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 );
 
 behaves_like_net_amazon_s3_request 'put object with canned acl coercion' => (
@@ -54,7 +54,7 @@ behaves_like_net_amazon_s3_request 'put object with canned acl coercion' => (
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key',
-	expect_request_headers  => { 'x-amz-acl' => 'private' },
+	expect_request_headers  => { x_amz_acl => 'private' },
 );
 
 behaves_like_net_amazon_s3_request 'put object with explicit acl' => (
@@ -70,8 +70,8 @@ behaves_like_net_amazon_s3_request 'put object with explicit acl' => (
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key',
 	expect_request_headers  => {
-		'x-amz-grant-read'  => 'id="123", id="234"',
-		'x-amz-grant-write' => 'id="345"',
+		x_amz_grant_read  => 'id="123", id="234"',
+		x_amz_grant_write => 'id="345"',
 	},
 );
 
@@ -84,7 +84,7 @@ behaves_like_net_amazon_s3_request 'put object with service side encryption' => 
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key',
-	expect_request_headers  => { 'x-amz-server-side-encryption' => 'AES256' },
+	expect_request_headers  => { x_amz_server_side_encryption => 'AES256' },
 );
 
 had_no_warnings;

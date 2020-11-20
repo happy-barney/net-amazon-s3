@@ -133,8 +133,22 @@ sub expect_request_headers {
 
 	local $Test::Builder::Level = $Test::Builder::Level + 1;
 
+	my %headers = $request->http_request->_build_request->headers->flatten;
+	for my $key (keys %headers) {
+		my $new_key = lc $key;
+		$new_key =~ tr/-/_/;
+
+		$headers{$new_key} = delete $headers{$key};
+	}
+
+	unless ($expected->$Safe::Isa::_isa ('Test::Deep::Cmp')) {
+		for my $key (qw[ content_type content_length ]) {
+			delete $headers{$key} unless exists $expected->{$key};
+		}
+	}
+
 	return cmp_deeply
-		$request->http_request->headers,
+		\%headers,
 		$expected,
 		"it builds expected request headers"
 		;

@@ -21,8 +21,8 @@ behaves_like_net_amazon_s3_request 'abort multipart upload with empty parts' => 
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploadId=123%26456',
 	expect_request_headers  => {
-		'Content-Length' => ignore,
-		'Content-Type' => 'application/xml',
+		content_length => ignore,
+		content_type => 'application/xml',
 	},
 	expect_request_content  => <<'EOXML',
 <CompleteMultipartUpload xmlns="http://s3.amazonaws.com/doc/2006-03-01/"></CompleteMultipartUpload>
@@ -40,8 +40,8 @@ behaves_like_net_amazon_s3_request 'abort multipart upload with some parts' => (
 	expect_request_method   => 'POST',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/some/key?uploadId=123%26456',
 	expect_request_headers  => {
-		'Content-Length' => ignore,
-		'Content-Type' => 'application/xml',
+		content_length => ignore,
+		content_type => 'application/xml',
 	},
 	expect_request_content  => <<'EOXML',
 <CompleteMultipartUpload xmlns="http://s3.amazonaws.com/doc/2006-03-01/">

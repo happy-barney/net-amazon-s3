@@ -11,7 +11,7 @@ BEGIN { require 'test-helper-s3-request.pl' }
 plan tests => 11;
 
 sub h ($) {
-	+{ 'Content-Length' => ignore, 'Content-Type' => ignore, %{ $_[0] } };
+	+{ content_length => ignore, content_type => ignore, %{ $_[0] } };
 }
 
 behaves_like_net_amazon_s3_request 'create bucket' => (
@@ -31,7 +31,7 @@ behaves_like_net_amazon_s3_request 'create bucket with deprecated acl_short' => 
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
-	expect_request_headers  => h { 'x-amz-acl' => 'private' },
+	expect_request_headers  => h { x_amz_acl => 'private' },
 	expect_request_content  => '',
 );
 
@@ -42,7 +42,7 @@ behaves_like_net_amazon_s3_request 'create bucket with canned acl' => (
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
-	expect_request_headers  => h { 'x-amz-acl' => 'private' },
+	expect_request_headers  => h { x_amz_acl => 'private' },
 	expect_request_content  => '',
 );
 
@@ -53,7 +53,7 @@ behaves_like_net_amazon_s3_request 'create bucket with canned acl coercion' => (
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
-	expect_request_headers  => h { 'x-amz-acl' => 'private' },
+	expect_request_headers  => h { 'x_amz_acl' => 'private' },
 	expect_request_content  => '',
 );
 
@@ -68,8 +68,8 @@ behaves_like_net_amazon_s3_request 'create bucket with exact acl' => (
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
 	expect_request_headers  => h {
-		'x-amz-grant-read'  => 'id="123", id="234"',
-		'x-amz-grant-write' => 'id="345"',
+		'x_amz_grant_read'  => 'id="123", id="234"',
+		'x_amz_grant_write' => 'id="345"',
 	},
 	expect_request_content  => '',
 );
@@ -93,7 +93,7 @@ behaves_like_net_amazon_s3_request 'create bucket in region with deprecated acl_
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
-	expect_request_headers  => h { 'x-amz-acl' => 'private' },
+	expect_request_headers  => h { 'x_amz_acl' => 'private' },
 	expect_request_content  => fixture ('request::bucket_create_ca_central_1')->{content},
 );
 
@@ -105,7 +105,7 @@ behaves_like_net_amazon_s3_request 'create bucket in region with canned acl' => 
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
-	expect_request_headers  => h { 'x-amz-acl' => 'private' },
+	expect_request_headers  => h { 'x_amz_acl' => 'private' },
 	expect_request_content  => fixture ('request::bucket_create_ca_central_1')->{content},
 );
 
@@ -117,7 +117,7 @@ behaves_like_net_amazon_s3_request 'create bucket in region with canned acl coer
 
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
-	expect_request_headers  => h { 'x-amz-acl' => 'private' },
+	expect_request_headers  => h { 'x_amz_acl' => 'private' },
 	expect_request_content  => fixture ('request::bucket_create_ca_central_1')->{content},
 );
 
@@ -133,8 +133,8 @@ behaves_like_net_amazon_s3_request 'create bucket in region with exact acl' => (
 	expect_request_method   => 'PUT',
 	expect_request_uri      => 'https://some-bucket.s3.amazonaws.com/',
 	expect_request_headers  => h {
-		'x-amz-grant-read'  => 'id="123", id="234"',
-		'x-amz-grant-write' => 'id="345"',
+		'x_amz_grant_read'  => 'id="123", id="234"',
+		'x_amz_grant_write' => 'id="345"',
 	},
 	expect_request_content  => fixture ('request::bucket_create_ca_central_1')->{content},
 );
