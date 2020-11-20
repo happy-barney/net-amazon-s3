@@ -39,11 +39,11 @@ sub expect_operation_objects_delete {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Objects::Delete',
 		expect_request_method => 'POST',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?delete",
+		expect_request_uri    => default_bucket_uri . "?delete",
 		plan => {
 			"delete multiple objects" => {
 				act_arguments => [
-					bucket => 'bucket-name',
+					bucket => default_bucket_name,
 					keys   => [ 'key-1', 'key-2', 'key-3' ],
 				],
 				expect_request => methods (

@@ -61,11 +61,11 @@ sub expect_operation_bucket_create {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Create',
 		expect_request_method => 'PUT',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/",
+		expect_request_uri    => default_bucket_uri,
 		plan => {
 			"create bucket with name" => {
 				act_arguments => [
-					bucket => 'bucket-name',
+					bucket => default_bucket_name,
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
@@ -76,7 +76,7 @@ sub expect_operation_bucket_create {
 			},
 			"create bucket with location constraint" => {
 				act_arguments => [
-					bucket => 'bucket-name',
+					bucket => default_bucket_name,
 					location_constraint => 'eu-west-1',
 				],
 				expect_request => methods (
@@ -90,7 +90,7 @@ sub expect_operation_bucket_create {
 			},
 			"create bucket with acl" => {
 				act_arguments => [
-					bucket    => 'bucket-name',
+					bucket    => default_bucket_name,
 					acl       => 'public-read',
 				],
 				expect_request => methods (

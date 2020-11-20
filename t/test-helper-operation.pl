@@ -17,6 +17,26 @@ sub default_hostname {
 	's3.amazonaws.com';
 }
 
+sub default_bucket_name {
+	'dummy-bucket-name',
+}
+
+sub default_object_name {
+	'dummy-key-name',
+}
+
+sub default_uri {
+	"https://${\ default_hostname }/";
+}
+
+sub default_bucket_uri {
+	"https://${\ default_bucket_name }.${\ default_hostname }/";
+}
+
+sub default_object_uri {
+	"https://${\ default_bucket_name }.${\ default_hostname }/${\ default_object_name }";
+}
+
 sub expectation_bucket {
 	my ($bucket_name) = @_;
 	any (

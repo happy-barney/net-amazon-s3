@@ -181,18 +181,18 @@ sub expect_operation_object_fetch {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"fetch object" => {
 				act_arguments => [
-					bucket => 'bucket-name',
-					key    => 'key-name',
+					bucket => default_bucket_name,
+					key    => default_object_name,
 					method => 'GET',
 					filename => 'foo',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'key-name',
+					key         => default_object_name,
 				),
 				expect_request_headers => {
 					content_length => 0,
@@ -206,16 +206,16 @@ sub expect_operation_object_fetch_content {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"fetch object content" => {
 				act_arguments => [
-					bucket => 'bucket-name',
-					key    => 'key-name',
+					bucket => default_bucket_name,
+					key    => default_object_name,
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'key-name',
+					key         => default_object_name,
 				),
 				expect_request_headers => {
 					content_length => 0,
@@ -229,18 +229,18 @@ sub expect_operation_object_fetch_filename {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"fetch object into file" => {
 				act_arguments => [
-					bucket => 'bucket-name',
-					key    => 'key-name',
+					bucket => default_bucket_name,
+					key    => default_object_name,
 					method => 'GET',
 					filename => 'foo',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'key-name',
+					key         => default_object_name,
 				),
 				expect_request_headers => {
 					content_length => 0,
@@ -254,18 +254,18 @@ sub expect_operation_object_fetch_callback {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"fetch object with callback" => {
 				act_arguments => [
-					bucket => 'bucket-name',
-					key    => 'key-name',
+					bucket => default_bucket_name,
+					key    => default_object_name,
 					method => 'GET',
 					filename => sub { },
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'key-name',
+					key         => default_object_name,
 				),
 				expect_request_headers => {
 					content_length => 0,
@@ -279,17 +279,17 @@ sub expect_operation_object_head {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Fetch',
 		expect_request_method => 'HEAD',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"head key" => {
 				act_arguments => [
-					bucket => 'bucket-name',
-					key    => 'key-name',
+					bucket => default_bucket_name,
+					key    => default_object_name,
 					method => 'HEAD',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'key-name',
+					key         => default_object_name,
 				),
 				expect_request_headers => {
 					content_length => 0,

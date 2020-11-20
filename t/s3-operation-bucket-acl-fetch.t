@@ -46,14 +46,14 @@ sub expect_operation_bucket_acl_fetch {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Acl::Fetch',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?acl",
+		expect_request_uri    => default_bucket_uri . "?acl",
 		expect_request_headers => {
 			content_length => 0,
 		},
 		plan => {
 			"fetch bucket acl" => {
 				act_arguments => [
-					bucket => 'bucket-name',
+					bucket => default_bucket_name,
 				],
 				expect_request => methods (
 					bucket => expectation_bucket ('bucket-name'),

@@ -60,14 +60,14 @@ sub expect_operation_bucket_delete {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Delete',
 		expect_request_method => 'DELETE',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/",
+		expect_request_uri    => default_bucket_uri,
 		expect_request_headers => {
 			content_length => 0,
 		},
 		plan => {
 			"delete bucket" => {
 				act_arguments => [
-					bucket => 'bucket-name',
+					bucket => default_bucket_name,
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),

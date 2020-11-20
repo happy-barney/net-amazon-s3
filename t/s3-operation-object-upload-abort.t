@@ -37,17 +37,17 @@ sub expect_operation_object_upload_abort {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Upload::Abort',
 		expect_request_method => 'DELETE',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?uploadId=42",
+		expect_request_uri    => default_object_uri . "?uploadId=42",
 		plan => {
 			"abort upload" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					upload_id   => 42,
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					upload_id   => 42,
 				),
 				expect_request_headers => {

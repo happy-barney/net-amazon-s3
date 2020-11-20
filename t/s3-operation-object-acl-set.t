@@ -64,17 +64,17 @@ sub expect_operation_object_acl_set {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Acl::Set',
 		expect_request_method => 'PUT',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?acl",
+		expect_request_uri    => default_object_uri . "?acl",
 		plan => {
 			"set object acl using acl (canned)" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					acl         => 'private',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					acl         => expectation_canned_acl ('private'),
 					acl_xml     => undef,
 				),
@@ -85,13 +85,13 @@ sub expect_operation_object_acl_set {
 			},
 			"set object acl using acl_short (deprecated)" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					acl_short   => 'public-read',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					acl         => expectation_canned_acl ('public-read'),
 					acl_xml     => undef,
 				),
@@ -102,13 +102,13 @@ sub expect_operation_object_acl_set {
 			},
 			"set object acl using acl_xml" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					acl_xml     => 'some xml placeholder',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					acl         => undef,
 					acl_xml     => 'some xml placeholder',
 				),

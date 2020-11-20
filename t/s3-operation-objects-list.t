@@ -98,11 +98,11 @@ sub expect_operation_objects_list_api {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Objects::List',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?delimiter=d&marker=m&max-keys=1000&prefix=p",
+		expect_request_uri    => default_bucket_uri . "?delimiter=d&marker=m&max-keys=1000&prefix=p",
 		plan => {
 			"list buckets" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
+					bucket      => default_bucket_name,
 					delimiter   => 'd',
 					max_keys    => 1_000,
 					marker      => 'm',
@@ -127,11 +127,11 @@ sub expect_operation_objects_list_client {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Objects::List',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?delimiter=d&max-keys=1000&prefix=p",
+		expect_request_uri    => default_bucket_uri . "?delimiter=d&max-keys=1000&prefix=p",
 		plan => {
 			"list buckets" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
+					bucket      => default_bucket_name,
 					delimiter   => 'd',
 					marker      => 'm',
 					prefix      => 'p'

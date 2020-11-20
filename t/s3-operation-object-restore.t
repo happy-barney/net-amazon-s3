@@ -28,18 +28,18 @@ sub expect_operation_object_restore {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Restore',
 		expect_request_method => 'POST',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?restore",
+		expect_request_uri    => default_object_uri . "?restore",
 		plan => {
 			"abort restore" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					days        => 42,
 					tier        => 'Standard',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					days        => 42,
 					tier        => 'Standard',
 				),

@@ -87,12 +87,12 @@ sub expect_operation_object_copy {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Add',
 		expect_request_method => 'PUT',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"copy key" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					source      => 'source-key',
 					acl_short   => 'public-read',
 					encryption  => 'object-encryption',
@@ -108,7 +108,7 @@ sub expect_operation_object_copy {
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					value       => '',
 					acl         => expectation_canned_acl ('public-read'),
 					encryption  => 'object-encryption',
@@ -134,12 +134,12 @@ sub expect_operation_object_edit_metadata {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Add',
 		expect_request_method => 'PUT',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key",
+		expect_request_uri    => default_object_uri,
 		plan => {
 			"copy key" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
-					key         => 'some-key',
+					bucket      => default_bucket_name,
+					key         => default_object_name,
 					acl_short   => 'public-read',
 					encryption  => 'object-encryption',
 					headers     => {
@@ -154,7 +154,7 @@ sub expect_operation_object_edit_metadata {
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					key         => 'some-key',
+					key         => default_object_name,
 					value       => '',
 					acl         => expectation_canned_acl ('public-read'),
 					encryption  => 'object-encryption',
@@ -164,7 +164,7 @@ sub expect_operation_object_edit_metadata {
 					content_length      => 0,
 					expires             => 2_345_567_890,
 					x_amz_acl           => 'public-read',
-					x_amz_copy_source   => '/bucket-name/some-key',
+					x_amz_copy_source   => "/${\ default_bucket_name }/${\ default_object_name }",
 					x_amz_meta_foo      => 'foo-value',
 					x_amz_metadata_directive => 'REPLACE',
 					x_amz_server_side_encryption => 'object-encryption',

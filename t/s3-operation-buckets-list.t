@@ -40,7 +40,7 @@ sub expect_operation_buckets_list {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Buckets::List',
 		expect_request_method => 'GET',
-		expect_request_uri    => "https://${ \ default_hostname }/",
+		expect_request_uri    => default_uri,
 		expect_request_headers => {
 			content_length => 0,
 		},

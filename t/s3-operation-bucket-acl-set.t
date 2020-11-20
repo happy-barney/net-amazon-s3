@@ -46,11 +46,11 @@ sub expect_operation_bucket_acl_set {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Acl::Set',
 		expect_request_method => 'PUT',
-		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?acl",
+		expect_request_uri    => default_bucket_uri . "?acl",
 		plan => {
 			"set bucket acl using acl (canned)" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
+					bucket      => default_bucket_name,
 					acl         => 'private',
 				],
 				expect_request => methods (
@@ -64,7 +64,7 @@ sub expect_operation_bucket_acl_set {
 			},
 			"set bucket acl using acl_short" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
+					bucket      => default_bucket_name,
 					acl_short   => 'public-read',
 				],
 				expect_request => methods (
@@ -78,7 +78,7 @@ sub expect_operation_bucket_acl_set {
 			},
 			"set bucket acl using acl_xml" => {
 				act_arguments => [
-					bucket      => 'bucket-name',
+					bucket      => default_bucket_name,
 					acl_xml     => 'some xml placeholder',
 				],
 				expect_request => methods (
