@@ -41,23 +41,27 @@ sub client_bucket_location {
 		;
 }
 
-sub expect_operation_bucket_location {
-	expect_operation_plan
-		implementations => +{ @_ },
-		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Location',
-		expect_request_method => 'GET',
-		expect_request_uri    => default_bucket_uri . "?location",
+sub should_fetch_bucket_location {
+	+{
+		act_arguments => [
+			bucket => default_bucket_name,
+		],
+		expect_request => methods (
+			bucket      => expectation_bucket ('bucket-name'),
+		),
 		expect_request_headers => {
 			content_length => 0,
 		},
-		plan => {
-			"location bucket with name" => {
-				act_arguments => [
-					bucket => default_bucket_name,
-				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-				),
-			},
-		}
+	}
+}
+
+sub expect_operation_bucket_location {
+	expect_operation_plan
+		implementations         => +{ @_ },
+		expect_operation        => 'Net::Amazon::S3::Operation::Bucket::Location',
+		expect_request_method   => 'GET',
+		expect_request_uri      => default_bucket_uri . "?location",
+		plan => [
+			\& should_fetch_bucket_location,
+		]
 }

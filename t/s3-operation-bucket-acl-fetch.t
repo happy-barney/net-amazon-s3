@@ -41,23 +41,27 @@ sub client_bucket_acl_fetch {
 		;
 }
 
-sub expect_operation_bucket_acl_fetch {
-	expect_operation_plan
-		implementations => +{ @_ },
-		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Acl::Fetch',
-		expect_request_method => 'GET',
-		expect_request_uri    => default_bucket_uri . "?acl",
+sub should_fetch_bucket_acl {
+	+{
+		act_arguments => [
+			bucket => default_bucket_name,
+		],
+		expect_request => methods (
+			bucket => expectation_bucket ('bucket-name'),
+		),
 		expect_request_headers => {
 			content_length => 0,
 		},
-		plan => {
-			"fetch bucket acl" => {
-				act_arguments => [
-					bucket => default_bucket_name,
-				],
-				expect_request => methods (
-					bucket => expectation_bucket ('bucket-name'),
-				),
-			},
-		}
+	}
+}
+
+sub expect_operation_bucket_acl_fetch {
+	expect_operation_plan
+		implementations         => +{ @_ },
+		expect_operation        => 'Net::Amazon::S3::Operation::Bucket::Acl::Fetch',
+		expect_request_method   => 'GET',
+		expect_request_uri      => default_bucket_uri . "?acl",
+		plan                    => [
+			\& should_fetch_bucket_acl,
+		],
 }

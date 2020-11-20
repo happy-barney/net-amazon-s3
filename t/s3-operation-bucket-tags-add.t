@@ -42,27 +42,31 @@ sub client_bucket_tags_set {
 		;
 }
 
+sub should_set_tags_on_bucket {
+	+{
+		act_arguments => [
+			bucket      => default_bucket_name,
+			tags        => fixture_tags_foo_bar_hashref,
+		],
+		expect_request => methods (
+			bucket      => expectation_bucket ('bucket-name'),
+			tags        => fixture_tags_foo_bar_hashref,
+		),
+		expect_request_headers => {
+			content_length => 210,
+			content_type   => 'application/xml',
+		},
+		expect_request_content_xml => fixture_tags_foo_bar_xml,
+	}
+}
+
 sub expect_operation_bucket_tags_set {
 	expect_operation_plan
-		implementations => +{ @_ },
-		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Tags::Add',
-		expect_request_method => 'PUT',
-		expect_request_uri    => default_bucket_uri . "?tagging",
-		plan => {
-			"set tags on bucket" => {
-				act_arguments => [
-					bucket      => default_bucket_name,
-					tags        => fixture_tags_foo_bar_hashref,
-				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					tags        => fixture_tags_foo_bar_hashref,
-				),
-				expect_request_headers => {
-					content_length => 210,
-					content_type   => 'application/xml',
-				},
-				expect_request_content_xml => fixture_tags_foo_bar_xml,
-			},
-		}
+		implementations         => +{ @_ },
+		expect_operation        => 'Net::Amazon::S3::Operation::Bucket::Tags::Add',
+		expect_request_method   => 'PUT',
+		expect_request_uri      => default_bucket_uri . "?tagging",
+		plan                    => [
+			\& should_set_tags_on_bucket,
+		]
 }

@@ -7,7 +7,9 @@ use FindBin;
 
 BEGIN { require "$FindBin::Bin/test-helper-common.pl" }
 
+use Ref::Util;
 use Sub::Override;
+use Sub::Util;
 
 use Shared::Examples::Net::Amazon::S3 ();
 use Shared::Examples::Net::Amazon::S3::API ();
@@ -83,6 +85,24 @@ sub build_default_client_object (\%) {
 	my ($args) = @_;
 
 	build_default_client_bucket (%$args)->object (key => delete $args->{key});
+}
+
+sub _expand_operation_plan (\%) {
+	my ($args) = @_;
+
+	return unless $args->{plan};
+	return unless Ref::Util::is_plain_arrayref ($args->{plan});
+
+	my %plan;
+	for my $entry (@{ $args->{plan} }) {
+		die "Arrayref plan expects code refs" unless Ref::Util::is_plain_coderef ($entry);
+		my $title = Sub::Util::subname ($entry);
+		$title =~ s/.*:://;
+		$title =~ tr/_/ /;
+		$plan{$title} = $entry->();
+	}
+
+	$args->{plan} = \%plan;
 }
 
 sub _build_operation_request {
@@ -272,6 +292,8 @@ sub expect_operation {
 
 sub expect_operation_plan {
 	my (%args) = @_;
+
+	_expand_operation_plan %args;
 
 	my %expectations = map +($_ => $args{$_}), grep m/^expect_/, keys %args;
 

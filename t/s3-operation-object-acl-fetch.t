@@ -41,25 +41,29 @@ sub api_object_acl_fetch_named {
 		;
 }
 
-sub expect_operation_object_acl_fetch {
-	expect_operation_plan
-		implementations => +{ @_ },
-		expect_operation => 'Net::Amazon::S3::Operation::Object::Acl::Fetch',
-		expect_request_method => 'GET',
-		expect_request_uri    => default_object_uri . "?acl",
+sub should_fetch_object_acl {
+	+{
+		act_arguments => [
+			bucket => default_bucket_name,
+			key    => default_object_name,
+		],
+		expect_request => methods (
+			bucket      => expectation_bucket ('bucket-name'),
+			key         => default_object_name,
+		),
 		expect_request_headers => {
 			content_length => 0,
 		},
-		plan => {
-			"fetch object acl" => {
-				act_arguments => [
-					bucket => default_bucket_name,
-					key    => default_object_name,
-				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-				),
-			},
-		}
+	}
+}
+
+sub expect_operation_object_acl_fetch {
+	expect_operation_plan
+		implementations         => +{ @_ },
+		expect_operation        => 'Net::Amazon::S3::Operation::Object::Acl::Fetch',
+		expect_request_method   => 'GET',
+		expect_request_uri      => default_object_uri . "?acl",
+		plan                    => [
+			\& should_fetch_object_acl,
+		]
 }

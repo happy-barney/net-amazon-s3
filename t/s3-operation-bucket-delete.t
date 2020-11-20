@@ -55,23 +55,27 @@ sub client_bucket_delete {
 		;
 }
 
-sub expect_operation_bucket_delete {
-	expect_operation_plan
-		implementations => +{ @_ },
-		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Delete',
-		expect_request_method => 'DELETE',
-		expect_request_uri    => default_bucket_uri,
+sub should_delete_bucket {
+	+{
+		act_arguments => [
+			bucket => default_bucket_name,
+		],
+		expect_request => methods (
+			bucket      => expectation_bucket ('bucket-name'),
+		),
 		expect_request_headers => {
 			content_length => 0,
 		},
-		plan => {
-			"delete bucket" => {
-				act_arguments => [
-					bucket => default_bucket_name,
-				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-				),
-			},
-		}
+	}
+}
+
+sub expect_operation_bucket_delete {
+	expect_operation_plan
+		implementations         => +{ @_ },
+		expect_operation        => 'Net::Amazon::S3::Operation::Bucket::Delete',
+		expect_request_method   => 'DELETE',
+		expect_request_uri      => default_bucket_uri,
+		plan                    => [
+			\& should_delete_bucket,
+		]
 }
