@@ -65,6 +65,103 @@ sub build_default_client_object (\%) {
 	build_default_client_bucket (%$args)->object (key => delete $args->{key});
 }
 
+sub _build_operation_request {
+	my ($operation, %args) = @_;
+
+	delete $args{error_handler};
+	delete $args{filename};
+
+	my $request_class = "${operation}::Request";
+
+	return $request_class->new (s3 => build_default_api, %args);
+}
+
+sub _build_unsigned_http_request {
+	my ($request) = @_;
+
+	my $guard = Sub::Override->new (
+		'Net::Amazon::S3::Request::_build_http_request' => sub {
+			my ($self, %params) = @_;
+			return $self->_build_signed_request (%params)->_build_request;
+		},
+	);
+
+	return $request->http_request;
+}
+
+sub _expectation {
+	my ($title, $message, $ok, $stack) = @_;
+
+	unless ($ok) {
+		fail $title;
+		diag $message;
+		diag Test::Deep::deep_diag $stack
+	}
+
+	return $ok;
+}
+
+sub _expectation_operation {
+	my ($title, %args) = @_;
+
+	return _expectation
+		$title,
+		"Operation type expectation",
+		Test::Deep::cmp_details ($args{operation}, $args{expect}),
+		;
+}
+
+sub _expectation_request_method {
+	my ($title, %args) = @_;
+
+	return _expectation
+		$title,
+		"Request method expectation",
+		Test::Deep::cmp_details ($args{raw_request}->method, $args{expect}),
+		;
+}
+
+sub _expectation_request_uri {
+	my ($title, %args) = @_;
+
+	return _expectation
+		$title,
+		"Request uri expectation",
+		Test::Deep::cmp_details ($args{raw_request}->uri->as_string, $args{expect}),
+		;
+}
+
+sub _expectation_request_headers {
+	my ($title, %args) = @_;
+
+	return 1 unless $args{expect};
+
+	my %headers = $args{raw_request}->headers->flatten;
+	for my $key (keys %headers) {
+		my $new_key = lc $key;
+		$new_key =~ tr/-/_/;
+		$headers{$new_key} = delete $headers{$key};
+	}
+
+	return _expectation
+		$title,
+		"Request headers expectation",
+		Test::Deep::cmp_details (\%headers, $args{expect}),
+		;
+}
+
+sub _expectation_request_instance {
+	my ($title, %args) = @_;
+
+	return 1 unless $args{expect_request};
+
+	return _expectation
+		$title,
+		"Request instance expectation",
+		Test::Deep::cmp_details ($args{request}, $args{expect_request}),
+		;
+}
+
 sub expect_operation {
 	my ($title, %plan) = @_;
 
@@ -73,56 +170,40 @@ sub expect_operation {
 		sub {
 			my ($self, $operation, %args) = @_;
 
-			delete $args{error_handler};
+			my $subtest = sub {
+				return unless _expectation_operation $title =>
+					operation => $operation,
+					expect    => $plan{expect_operation},
+					;
 
-			my %construct = %args;
-			delete $construct{filename};
+				my $request_class = "$plan{expect_operation}::Request";
+				my $request = _build_operation_request ($operation, %args);
+				my $raw_request = _build_unsigned_http_request ($request);
 
-			my ($ok, $stack);
-			($ok, $stack) = Test::Deep::cmp_details ($operation, $plan{expect_operation});
-			diag ("operation expectation failed") unless $ok;
+				return unless _expectation_request_method       $title =>
+					raw_request => $raw_request,
+					expect      => $plan{expect_request_method},
+					;
 
-			my $request_class = "$plan{expect_operation}::Request";
-			my $request = $request_class->new (s3 => build_default_api, %construct);
-			# HTTP::Request but unsigned
-			my $guard = Sub::Override->new (
-				'Net::Amazon::S3::Request::_build_http_request' => sub {
-					my ($self, %params) = @_;
+				return unless _expectation_request_uri          $title =>
+					raw_request => $raw_request,
+					expect      => $plan{expect_request_uri},
+					;
 
-					return $self->_build_signed_request( %params )->_build_request;
-				},
-			);
-			my $raw_request = $request->http_request;
+				return unless _expectation_request_headers      $title =>
+					raw_request => $raw_request,
+					expect      => $plan{expect_request_headers},
+					;
 
-			if ($ok) {
-				($ok, $stack) = Test::Deep::cmp_details ($raw_request->method, $plan{expect_request_method});
-				diag ("request method expectation failed") unless $ok;
-			}
+				return unless _expectation_request_instance $title =>
+					request     => $request,
+					expect      => $plan{expect_request},
+					;
 
-			if ($ok) {
-				($ok, $stack) = Test::Deep::cmp_details ($raw_request->uri->as_string, $plan{expect_request_uri});
-				diag ("request uri expectation failed") unless $ok;
-			}
+				pass $title;
+			};
 
-			if ($ok && $plan{expect_request_headers}) {
-				my %headers = $raw_request->headers->flatten;
-				for my $key (keys %headers) {
-					my $new_key = lc $key;
-					$new_key =~ tr/-/_/;
-					$headers{$new_key} = delete $headers{$key};
-				}
-
-				($ok, $stack) = Test::Deep::cmp_details (\%headers, $plan{expect_request_headers});
-				diag ("request headers expectation failed") unless $ok;
-			}
-
-			if ($ok && $plan{expect_request}) {
-				($ok, $stack) = Test::Deep::cmp_details ($request, $plan{expect_request});
-				diag ("request instance expectation failed") unless $ok;
-			}
-
-			diag Test::Deep::deep_diag ($stack)
-				unless ok $title, got => $ok;
+			$subtest->();
 
 			die bless {}, 'expect_operation';
 		}
