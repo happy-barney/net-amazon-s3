@@ -30,7 +30,7 @@ __PACKAGE__->meta->make_immutable;
 # returns bool
 sub add_key {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments (\@_, ['key', 'value']);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (\@_, value => {positional => 1});
 
 	my $key = delete $args{key};
 	my $value = delete $args{value};
@@ -68,7 +68,8 @@ sub add_key {
 
 sub add_key_filename {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments (\@_, ['key', 'value']);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (\@_, value => {positional => 1});
+
 	$args{value} = \ delete $args{value};
 
 	return $self->add_key (%args);
@@ -76,7 +77,7 @@ sub add_key_filename {
 
 sub copy_key {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments (\@_, ['key', 'source' ]);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (\@_, source => {positional => 1});
 
 	my $key = delete $args{key};
 	my $source = delete $args{source};
@@ -131,7 +132,7 @@ sub head_key {
 
 sub query_string_authentication_uri {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments (\@_, ['key', 'expires_at']);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (\@_, expires_at => {positional => 1});
 
 	$args{method} = 'GET' unless exists $args{method};
 
@@ -147,7 +148,11 @@ sub query_string_authentication_uri {
 
 sub get_key {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments (\@_, ['key', 'method', 'filename']);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (
+		\@_,
+		method => {positional => 1},
+		filename => {positional => 1},
+	);
 
 	$args{filename} = ${ delete $args{filename} }
 		if ref $args{filename};
@@ -181,7 +186,11 @@ sub get_key {
 
 sub get_key_filename {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments (\@_, ['key', 'method', 'filename']);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (
+		\@_,
+		method => {positional => 1},
+		filename => {positional => 1},
+	);
 
 	$args{filename} = \ delete $args{filename};
 	return $self->get_key (%args);

@@ -17,38 +17,68 @@ sub act;
 subtest "parse_arguments() " => sub {
 	local *act = sub { Net::Amazon::S3::Utils->parse_arguments (@_) };
 
-	cmp_deeply "_parse_arguments() should recognize required positional arguments" => (
-		got    => { act (['bucket-arg', 'key-arg'], [qw[ bucket key ]]) },
+	cmp_deeply "parse_arguments() should recognize named arguments" => (
+		got    => { act ([bucket => 'bucket-arg', key => 'key-arg']) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 
-	cmp_deeply "_parse_arguments() should recognize required positional argument specified as named argument" => (
-		got    => { act (['key-arg', bucket => 'bucket-arg'], [qw[ bucket key ]]) },
+	cmp_deeply "parse_arguments() should recognize configuration hash" => (
+		got    => { act ([{bucket => 'bucket-arg', key => 'key-arg'}]) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 
-	cmp_deeply "_parse_arguments() should recognize required positional argument specified as named arguments" => (
-		got    => { act ([key => 'key-arg', bucket => 'bucket-arg'], [qw[ bucket key ]]) },
+	cmp_deeply "parse_arguments() should recognize required positional arguments" => (
+		got    => { act (['bucket-arg', 'key-arg'], bucket => { positional => 1 }, key => { positional => 1 }) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 
-	cmp_deeply "_parse_arguments() should recognize required positional argument specified via configuration hash" => (
-		got    => { act (['key-arg', { bucket => 'bucket-arg' }], [qw[ bucket key ]]) },
+	cmp_deeply "parse_arguments() should recognize positional argument specified as named" => (
+		got    => { act (['bucket-arg', key => 'key-arg'], bucket => { positional => 1 }, key => { positional => 1 }) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 
-	cmp_deeply "_parse_arguments() should recognize required positional arguments specified via configuration hash" => (
-		got    => { act ([{ key => 'key-arg', bucket => 'bucket-arg' }], [qw[ bucket key ]]) },
+	cmp_deeply "parse_arguments() should recognize positional argument specified via configuration hash" => (
+		got    => { act (['bucket-arg', { key => 'key-arg' }], bucket => { positional => 1 }, key => { positional => 1 }) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 
-	cmp_deeply "_parse_arguments() should recognize combination of named arguments and configuration hash" => (
-		got    => { act ([ key => 'key-arg', { bucket => 'bucket-arg' }], [qw[ bucket key ]]) },
+	cmp_deeply "parse_arguments() should ignore hashref argument passed as named" => (
+		got    => { act (['bucket-arg', tags => { tag => 1 }], bucket => { positional => 1 }) },
+		expect => { bucket => 'bucket-arg', tags => { tag => 1 } },
+	);
+
+	cmp_deeply "parse_arguments() should recognize required positional arguments" => (
+		got    => { act (['bucket-arg', 'key-arg'], bucket => {positional => 1}, key => {positional => 1}) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 
-	cmp_deeply "_parse_arguments() should recognize alias of required positional argument" => (
-		got    => { act (['key-arg', { name => 'bucket-arg' }], [qw[ bucket key ]], { name => 'bucket' }) },
+	cmp_deeply "parse_arguments() should recognize required positional argument specified as named argument" => (
+		got    => { act (['key-arg', bucket => 'bucket-arg'], bucket => {positional => 1}, key => {positional => 1}) },
+		expect => { bucket => 'bucket-arg', key => 'key-arg' },
+	);
+
+	cmp_deeply "parse_arguments() should recognize required positional argument specified as named arguments" => (
+		got    => { act ([key => 'key-arg', bucket => 'bucket-arg'], bucket => {positional => 1}, key => {positional => 1}) },
+		expect => { bucket => 'bucket-arg', key => 'key-arg' },
+	);
+
+	cmp_deeply "parse_arguments() should recognize required positional argument specified via configuration hash" => (
+		got    => { act (['key-arg', { bucket => 'bucket-arg' }], bucket => {positional => 1}, key => {positional => 1}) },
+		expect => { bucket => 'bucket-arg', key => 'key-arg' },
+	);
+
+	cmp_deeply "parse_arguments() should recognize required positional arguments specified via configuration hash" => (
+		got    => { act ([{ key => 'key-arg', bucket => 'bucket-arg' }], bucket => {positional => 1}, key => {positional => 1}) },
+		expect => { bucket => 'bucket-arg', key => 'key-arg' },
+	);
+
+	cmp_deeply "parse_arguments() should recognize combination of named arguments and configuration hash" => (
+		got    => { act ([ key => 'key-arg', { bucket => 'bucket-arg' }], bucket => {positional => 1}, key => {positional => 1}) },
+		expect => { bucket => 'bucket-arg', key => 'key-arg' },
+	);
+
+	cmp_deeply "parse_arguments() should recognize alias of required positional argument" => (
+		got    => { act (['key-arg', { name => 'bucket-arg' }], bucket => {positional => 1}, key => {positional => 1}, name => { alias_for => 'bucket' }) },
 		expect => { bucket => 'bucket-arg', key => 'key-arg' },
 	);
 };

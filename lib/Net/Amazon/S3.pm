@@ -953,8 +953,12 @@ and extendable, API's methods support multiple ways how to provide their argumen
 	method ({ named => 'argument', another => 'argument' });
 	method (positional, { named => 'argument', another => 'argument' } );
 
+Deprecated.
+
 Last argument of every method can be configuration hash, treated as additional
-named arguments. Can be combined with named arguments.
+named arguments.
+
+Configuration hash is recognized only after positional arguments.
 
 =item positional arguments with optional named arguments
 

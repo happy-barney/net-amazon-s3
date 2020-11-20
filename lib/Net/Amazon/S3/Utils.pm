@@ -2,15 +2,32 @@ package Net::Amazon::S3::Utils;
 # ABSTRACT: misc utils
 
 sub parse_arguments {
-	my ($self, $arguments, $positional, $aliases) = @_;
+	my ($self, $arguments, @spec) = @_;
+	my (%aliases, %positional, %optional, %default, @positional);
+
+	my $index = 0;
+	while ($index < @spec) {
+		my ($name, $spec) = @spec[$index++, $index++];
+
+		$aliases{$name} = $spec->{alias_for} if $spec->{alias_for};
+		push @positional, $name if $spec->{positional};
+		$positional{$name} = 1 if $spec->{positional};
+		$optional{$name} = 1 if $spec->{optional};
+		$default{$name} = $spec->{default} if $spec->{default};
+	}
+
+	return unless @$arguments;
+
 	my %args;
-	$aliases = {} unless $aliases;
+	%args = %{ pop @$arguments }
+		if Ref::Util::is_plain_hashref ($arguments->[-1])
+		&& (@$arguments <= 1 + keys %positional)
+		;
 
-	push @$arguments, %{ pop @$arguments }
-		if @$arguments && Ref::Util::is_plain_hashref ($arguments->[-1]);
+	$args{$aliases{$_}} = delete $args{$_}
+		for grep exists $aliases{$_}, keys %args;
 
-	my %positional = map +($_ => 1), grep ! exists $args{$_}, @$positional;
-	my $positional_count = scalar keys %positional;
+	my $positional_count = scalar grep ! exists $args{$_}, keys %positional;
 	while (@$arguments > 1 && @$arguments > $positional_count) {
 		my ($name, $value) = splice @$arguments, -2, 2;
 
@@ -26,40 +43,45 @@ sub parse_arguments {
 		}
 	}
 
-	#die "Odd number of named arguments"
-	#	if @$arguments != $positional_count;
+	$args{$aliases{$_}} = delete $args{$_}
+		for grep exists $aliases{$_}, keys %args;
 
-	for my $key (keys %$aliases) {
-		next unless exists $args{$key};
-		my $value = delete $args{$key};
-		my $alias_for = $aliases->{$key};
-		$args{$alias_for} = $value unless exists $args{$alias_for};
-	}
-
-	for my $name (@$positional) {
+	for my $name (@positional) {
 		next if exists $args{$name};
 		$args{$name} = shift @$arguments;
 	}
 
+	$args{$_} = $default{$_}
+		for grep ! exists $args{$_}, keys %default;
+
 	return %args;
 }
 
-sub parse_arguments_with_bucket {
-	my ($self, $arguments) = @_;
 
-	return $self->parse_arguments ($arguments, [qw[ bucket ]], { name => 'bucket' });
+sub parse_arguments_with_bucket {
+	return shift->parse_arguments (
+		shift,
+		bucket => { positional => 1 },
+		name => { alias_for => 'bucket' },
+		@_,
+	);
 }
 
 sub parse_arguments_with_bucket_and_object {
-	my ($self, $arguments) = @_;
 
-	return $self->parse_arguments ($arguments, [qw[ bucket key ]], { name => 'bucket' });
+	return shift->parse_arguments_with_bucket (
+		shift,
+		key => { positional => 1 },
+		@_,
+	);
 }
 
 sub parse_arguments_with_object {
-	my ($self, $arguments) = @_;
-
-	return $self->parse_arguments ($arguments, [qw[ key ]], { name => 'bucket' });
+	return shift->parse_arguments (
+		shift,
+		key => { positional => 1 },
+		@_,
+	);
 }
 
 1;
