@@ -108,13 +108,6 @@ sub expect_operation_objects_list_api {
 					marker      => 'm',
 					prefix      => 'p'
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					delimiter   => 'd',
-					max_keys    => 1_000,
-					marker      => 'm',
-					prefix      => 'p',
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},
@@ -136,13 +129,6 @@ sub expect_operation_objects_list_client {
 					marker      => 'm',
 					prefix      => 'p'
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					delimiter   => 'd',
-					max_keys    => 1_000,
-					marker      => undef,,
-					prefix      => 'p',
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},

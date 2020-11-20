@@ -47,13 +47,6 @@ sub expect_operation_object_upload_complete {
 					etags       => [ 'etag-1', 'etag-2' ],
 					part_numbers => [ 1, 2 ],
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					upload_id   => 42,
-					etags       => [ 'etag-1', 'etag-2' ],
-					part_numbers => [ 1, 2 ],
-				),
 				expect_request_headers => {
 					content_length => 255,
 					content_type   => 'application/xml',

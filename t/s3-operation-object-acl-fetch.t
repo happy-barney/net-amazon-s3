@@ -47,10 +47,6 @@ sub should_fetch_object_acl {
 			bucket => default_bucket_name,
 			key    => default_object_name,
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			key         => default_object_name,
-		),
 		expect_request_headers => {
 			content_length => 0,
 		},

@@ -65,10 +65,6 @@ sub should_delete_object {
 			bucket => default_bucket_name,
 			key    => default_object_name,
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			key         => 'key-name',
-		),
 		expect_request_headers => {
 			content_length => 0,
 		},

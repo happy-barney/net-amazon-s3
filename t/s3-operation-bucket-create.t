@@ -61,9 +61,6 @@ sub should_create_bucket {
 		act_arguments => [
 			bucket => default_bucket_name,
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-		),
 		expect_request_headers => {
 			content_length => 0,
 		},
@@ -76,10 +73,6 @@ sub should_create_bucket_with_default_location_constraint {
 			bucket => default_bucket_name,
 			location_constraint => 'us-east-1',
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			location_constraint => 'us-east-1',
-		),
 		expect_request_headers => {
 			content_length => 0,
 		},
@@ -92,10 +85,6 @@ sub should_create_bucket_with_nondefault_location_constraint {
 			bucket => default_bucket_name,
 			location_constraint => 'ca-central-1',
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			location_constraint => 'ca-central-1',
-		),
 		expect_request_headers => {
 			content_length => 196,
 			content_type => 'application/xml',
@@ -110,10 +99,6 @@ sub should_create_bucket_with_acl {
 			bucket    => default_bucket_name,
 			acl       => 'public-read',
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			acl         => expectation_canned_acl ('public-read'),
-		),
 		expect_request_headers => {
 			content_length => 0,
 			x_amz_acl      => 'public-read',

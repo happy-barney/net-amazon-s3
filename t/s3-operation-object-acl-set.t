@@ -66,12 +66,6 @@ sub should_set_object_acl_using_canned_acl {
 			key         => default_object_name,
 			acl         => Net::Amazon::S3::ACL::Canned->PRIVATE,
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			key         => default_object_name,
-			acl         => expectation_canned_acl ('private'),
-			acl_xml     => undef,
-		),
 		expect_request_headers => {
 			content_length => 0,
 			x_amz_acl      => 'private',
@@ -86,12 +80,6 @@ sub should_set_object_acl_using_canned_acl_coercion {
 			key         => default_object_name,
 			acl         => 'private',
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			key         => default_object_name,
-			acl         => expectation_canned_acl ('private'),
-			acl_xml     => undef,
-		),
 		expect_request_headers => {
 			content_length => 0,
 			x_amz_acl      => 'private',
@@ -106,12 +94,6 @@ sub should_set_object_acl_using_deprecated_acl_short {
 			key         => default_object_name,
 			acl_short   => 'public-read',
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			key         => default_object_name,
-			acl         => expectation_canned_acl ('public-read'),
-			acl_xml     => undef,
-		),
 		expect_request_headers => {
 			content_length => 0,
 			x_amz_acl      => 'public-read',
@@ -126,12 +108,6 @@ sub should_set_object_acl_using_explicit_xml {
 			key         => default_object_name,
 			acl_xml     => '<?xml version="1.0"?><some-xml-placeholder/>',
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			key         => default_object_name,
-			acl         => undef,
-			acl_xml     => '<?xml version="1.0"?><some-xml-placeholder/>',
-		),
 		expect_request_headers => {
 			content_length => 44,
 			content_type   => 'application/xml',

@@ -106,13 +106,6 @@ sub expect_operation_object_copy {
 						foo => 'foo-value',
 					},
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					value       => '',
-					acl         => expectation_canned_acl ('public-read'),
-					encryption  => 'object-encryption',
-				),
 				expect_request_headers => {
 					content_encoding    => 'content-encoding',
 					content_length      => 0,
@@ -152,13 +145,6 @@ sub expect_operation_object_edit_metadata {
 						foo => 'foo-value',
 					},
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					value       => '',
-					acl         => expectation_canned_acl ('public-read'),
-					encryption  => 'object-encryption',
-				),
 				expect_request_headers => {
 					content_encoding    => 'content-encoding',
 					content_length      => 0,

@@ -45,11 +45,6 @@ sub expect_operation_object_upload_abort {
 					key         => default_object_name,
 					upload_id   => 42,
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					upload_id   => 42,
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},

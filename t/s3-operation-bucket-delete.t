@@ -60,9 +60,6 @@ sub should_delete_bucket {
 		act_arguments => [
 			bucket => default_bucket_name,
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-		),
 		expect_request_headers => {
 			content_length => 0,
 		},

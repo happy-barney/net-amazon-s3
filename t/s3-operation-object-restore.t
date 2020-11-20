@@ -37,12 +37,6 @@ sub expect_operation_object_restore {
 					days        => 42,
 					tier        => 'Standard',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					days        => 42,
-					tier        => 'Standard',
-				),
 				expect_request_headers => {
 					content_length => 202,
 					content_type   => 'application/xml',

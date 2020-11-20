@@ -61,11 +61,6 @@ sub expect_operation_object_tags_set {
 					tags        => fixture_tags_foo_bar_hashref,
 				],
 				expect_request_uri  => default_object_uri . "?tagging",
-				expect_request      => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					tags        => fixture_tags_foo_bar_hashref,
-				),
 				expect_request_content_xml => fixture_tags_foo_bar_xml,
 			},
 			"set tags on object version" => {
@@ -76,12 +71,6 @@ sub expect_operation_object_tags_set {
 					tags        => fixture_tags_foo_bar_hashref,
 				],
 				expect_request_uri  => default_object_uri . "?tagging&versionId=foo",
-				expect_request      => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					version_id  => 'foo',
-					tags        => fixture_tags_foo_bar_hashref,
-				),
 				expect_request_content_xml => fixture_tags_foo_bar_xml,
 			},
 		}

@@ -55,12 +55,6 @@ sub expect_operation_object_upload_create {
 					key         => default_object_name,
 					object_acl  => 'private',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					encryption  => undef,
-					acl         => expectation_canned_acl ('private'),
-				),
 				expect_request_headers => {
 					content_length => 0,
 					x_amz_acl => 'private',
@@ -72,12 +66,6 @@ sub expect_operation_object_upload_create {
 					key         => default_object_name,
 					acl         => 'private',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					encryption  => undef,
-					acl         => expectation_canned_acl ('private'),
-				),
 				expect_request_headers => {
 					content_length => 0,
 					x_amz_acl => 'private',
@@ -89,12 +77,6 @@ sub expect_operation_object_upload_create {
 					key         => default_object_name,
 					acl_short   => 'private',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					encryption  => undef,
-					acl         => expectation_canned_acl ('private'),
-				),
 				expect_request_headers => {
 					content_length => 0,
 					x_amz_acl => 'private',
@@ -106,13 +88,6 @@ sub expect_operation_object_upload_create {
 					key         => default_object_name,
 					headers     => { x_amz_meta_additional => 'additional-header' },
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					encryption  => undef,
-					acl         => undef,
-					headers     => { x_amz_meta_additional => 'additional-header' },
-				),
 				expect_request_headers => {
 					content_length => 0,
 					x_amz_meta_additional => 'additional-header',
@@ -124,12 +99,6 @@ sub expect_operation_object_upload_create {
 					key         => default_object_name,
 					encryption  => 'AES256',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					encryption  => 'AES256',
-					acl         => undef,
-				),
 				expect_request_headers => {
 					content_length => 0,
 					x_amz_server_side_encryption => 'AES256',

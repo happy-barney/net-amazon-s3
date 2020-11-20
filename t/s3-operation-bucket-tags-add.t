@@ -48,10 +48,6 @@ sub should_set_tags_on_bucket {
 			bucket      => default_bucket_name,
 			tags        => fixture_tags_foo_bar_hashref,
 		],
-		expect_request => methods (
-			bucket      => expectation_bucket ('bucket-name'),
-			tags        => fixture_tags_foo_bar_hashref,
-		),
 		expect_request_headers => {
 			content_length => 210,
 			content_type   => 'application/xml',

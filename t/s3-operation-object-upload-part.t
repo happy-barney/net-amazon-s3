@@ -49,14 +49,6 @@ sub expect_operation_object_upload_part {
 						x_amz_meta_additional => 'additional-header',
 					},
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-					value       => 'foo-bar-baz',
-					upload_id   => 42,
-					part_number => 1,
-					copy_source => 'source-key',
-				),
 				expect_request_headers => {
 					content_length      => 11,
 					x_amz_copy_source   => 'source-key',

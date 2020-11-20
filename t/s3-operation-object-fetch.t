@@ -190,10 +190,6 @@ sub expect_operation_object_fetch {
 					method => 'GET',
 					filename => 'foo',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},
@@ -213,10 +209,6 @@ sub expect_operation_object_fetch_content {
 					bucket => default_bucket_name,
 					key    => default_object_name,
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},
@@ -238,10 +230,6 @@ sub expect_operation_object_fetch_filename {
 					method => 'GET',
 					filename => 'foo',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},
@@ -263,10 +251,6 @@ sub expect_operation_object_fetch_callback {
 					method => 'GET',
 					filename => sub { },
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},
@@ -287,10 +271,6 @@ sub expect_operation_object_head {
 					key    => default_object_name,
 					method => 'HEAD',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-					key         => default_object_name,
-				),
 				expect_request_headers => {
 					content_length => 0,
 				},
