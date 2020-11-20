@@ -46,6 +46,10 @@ sub expect_operation_objects_delete {
 					bucket => 'bucket-name',
 					keys   => [ 'key-1', 'key-2', 'key-3' ],
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					keys        => [ 'key-1', 'key-2', 'key-3' ],
+				),
 			},
 		}
 }

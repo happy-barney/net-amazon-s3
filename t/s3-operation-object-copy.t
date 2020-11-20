@@ -106,11 +106,11 @@ sub expect_operation_object_copy {
 						foo => 'foo-value',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => '',
-					acl_short   => 'public-read',
+					acl         => expectation_canned_acl ('public-read'),
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -121,7 +121,7 @@ sub expect_operation_object_copy {
 						'x-amz-metadata-directive' => 'REPLACE',
 						'x-amz-copy-source'        => 'source-key',
 					}
-				},
+				),
 			},
 		}
 }
@@ -149,11 +149,11 @@ sub expect_operation_object_edit_metadata {
 						foo => 'foo-value',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => '',
-					acl_short   => 'public-read',
+					acl         => expectation_canned_acl ('public-read'),
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -164,7 +164,7 @@ sub expect_operation_object_edit_metadata {
 						'x-amz-metadata-directive' => 'REPLACE',
 						'x-amz-copy-source'        => '/bucket-name/some-key',
 					}
-				},
+				),
 			},
 		}
 }

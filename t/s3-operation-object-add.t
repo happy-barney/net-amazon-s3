@@ -188,11 +188,11 @@ sub expect_operation_object_add_scalar {
 						foo => 'foo-value',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => 'foo-bar-baz',
-					acl         => 'private',
+					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -202,7 +202,7 @@ sub expect_operation_object_add_scalar {
 						x_amz_meta_foo => 'foo-value',
 						'Content-Length' => 11,
 					}
-				},
+				),
 			},
 		}
 }
@@ -231,11 +231,11 @@ sub expect_operation_object_add_file {
 						foo => 'foo-value',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => expect_coderef,
-					acl         => 'private',
+					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -246,7 +246,7 @@ sub expect_operation_object_add_file {
 						'Content-Length' => 72,
 						expect           => '100-continue',
 					}
-				},
+				),
 			},
 		}
 }
@@ -275,11 +275,11 @@ sub expect_operation_object_client_add_scalar {
 						foo => 'foo-value',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => 'foo-bar-baz',
-					acl         => obj_isa ('Net::Amazon::S3::ACL::Canned'),
+					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
 					headers     => {
 						'Content-Length' => 11,
@@ -290,7 +290,7 @@ sub expect_operation_object_client_add_scalar {
 						'x-amz-meta-foo'     => 'foo-value',
 						'x-amz-website-redirect-location' => 'location-value',
 					}
-				},
+				),
 			},
 		}
 }
@@ -319,11 +319,11 @@ sub expect_operation_object_client_add_file {
 						foo => 'foo-value',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => expect_coderef,
-					acl         => obj_isa ('Net::Amazon::S3::ACL::Canned'),
+					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
 					headers     => {
 						'Content-Length' => 72,
@@ -334,7 +334,7 @@ sub expect_operation_object_client_add_file {
 						'x-amz-meta-foo'     => 'foo-value',
 						'x-amz-website-redirect-location' => 'location-value',
 					}
-				},
+				),
 			},
 		}
 }

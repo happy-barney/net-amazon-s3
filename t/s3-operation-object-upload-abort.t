@@ -45,6 +45,11 @@ sub expect_operation_object_upload_abort {
 					key         => 'some-key',
 					upload_id   => 42,
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					upload_id   => 42,
+				),
 			},
 		}
 }

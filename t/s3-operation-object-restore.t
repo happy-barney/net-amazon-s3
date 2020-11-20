@@ -37,6 +37,12 @@ sub expect_operation_object_restore {
 					days        => 42,
 					tier        => 'Standard',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					days        => 42,
+					tier        => 'Standard',
+				),
 			},
 		}
 }

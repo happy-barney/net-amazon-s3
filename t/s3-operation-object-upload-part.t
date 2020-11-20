@@ -49,8 +49,8 @@ sub expect_operation_object_upload_part {
 						x_amz_meta_additional => 'additional-header',
 					},
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					value       => 'foo-bar-baz',
 					upload_id   => 42,
@@ -60,7 +60,7 @@ sub expect_operation_object_upload_part {
 						x_amz_meta_additional => 'additional-header',
 						'Content-Length' => 11,
 					},
-				},
+				),
 			},
 		}
 }

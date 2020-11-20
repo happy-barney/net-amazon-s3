@@ -53,6 +53,10 @@ sub expect_operation_object_acl_fetch {
 					bucket => 'bucket-name',
 					key    => 'key-name',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }

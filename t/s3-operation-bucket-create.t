@@ -67,18 +67,29 @@ sub expect_operation_bucket_create {
 				act_arguments => [
 					bucket => 'bucket-name',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+				),
 			},
 			"create bucket with location constraint" => {
 				act_arguments => [
 					bucket => 'bucket-name',
 					location_constraint => 'eu-west-1',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					location_constraint => 'eu-west-1',
+				),
 			},
 			"create bucket with acl" => {
 				act_arguments => [
 					bucket    => 'bucket-name',
 					acl       => 'public-read',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					acl         => expectation_canned_acl ('public-read'),
+				),
 			},
 		}
 }

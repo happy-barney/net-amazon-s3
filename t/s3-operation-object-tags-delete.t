@@ -54,7 +54,11 @@ sub expect_operation_object_tags_delete {
 					bucket      => 'bucket-name',
 					key         => 'some-key',
 				],
-				expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?tagging",
+				expect_request_uri  => "https://bucket-name.${ \ default_hostname }/some-key?tagging",
+				expect_request      => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+				),
 			},
 			"delete tags from object version" => {
 				act_arguments => [
@@ -62,7 +66,12 @@ sub expect_operation_object_tags_delete {
 					key         => 'some-key',
 					version_id  => 'foo',
 				],
-				expect_request_uri    => "https://bucket-name.${ \ default_hostname }/some-key?tagging&versionId=foo",
+				expect_request_uri  => "https://bucket-name.${ \ default_hostname }/some-key?tagging&versionId=foo",
+				expect_request      => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					version_id  => 'foo',
+				),
 			},
 		}
 }

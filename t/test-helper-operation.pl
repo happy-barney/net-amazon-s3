@@ -17,6 +17,28 @@ sub default_hostname {
 	's3.amazonaws.com';
 }
 
+sub expectation_bucket {
+	my ($bucket_name) = @_;
+	any (
+		obj_isa ('Net::Amazon::S3::Bucket') & methods (bucket => $bucket_name),
+		$bucket_name,
+	);
+}
+
+sub expectation_canned_acl {
+	my ($content) = @_;
+
+	$content = $content->canned_acl
+		if $content->$Safe::Isa::_isa ('Net::Amazon::S3::ACL::Canned');
+
+	return all (
+		obj_isa ('Net::Amazon::S3::ACL::Canned'),
+		methods (canned_acl => $content),
+	) unless ref $content;
+
+	return $content;
+}
+
 sub build_default_api {
 	Shared::Examples::Net::Amazon::S3::API->_default_with_api({});
 }
@@ -70,8 +92,8 @@ sub expect_operation {
 			($ok, $stack) = Test::Deep::cmp_details ($raw_request->uri->as_string, $plan{expect_request_uri})
 				if $ok;
 
-			($ok, $stack) = Test::Deep::cmp_details (\%args, $plan{expect_arguments})
-				if $ok;
+			($ok, $stack) = Test::Deep::cmp_details ($request, $plan{expect_request})
+				if $ok && $plan{expect_request};
 
 			diag Test::Deep::deep_diag ($stack)
 				unless ok $title, got => $ok;
@@ -113,21 +135,10 @@ sub expect_operation_plan {
 			my %plan_expectations = map +($_ => $plan->{$_}), grep m/^expect_/, keys %{ $plan };
 
 			my @act_arguments = @{ $plan->{act_arguments} || [] };
-			my $expect_arguments = $plan->{expect_arguments};
-			$expect_arguments = { @act_arguments } unless $expect_arguments;
-
-			if (exists $expect_arguments->{bucket}) {
-				my $bucket_name = delete $expect_arguments->{bucket};
-				$expect_arguments->{bucket} = any (
-					obj_isa ('Net::Amazon::S3::Bucket') & methods (bucket => $bucket_name),
-					$bucket_name,
-				);
-			}
 
 			expect_operation "$implementation / $title" =>
 				act => sub { $act->(@act_arguments) },
 				expect_operation => $args{expect_operation},,
-				expect_arguments => $expect_arguments,
 				%expectations,
 				%plan_expectations,
 				;

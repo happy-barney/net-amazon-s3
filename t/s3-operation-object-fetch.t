@@ -190,6 +190,10 @@ sub expect_operation_object_fetch {
 					method => 'GET',
 					filename => 'foo',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }
@@ -206,11 +210,10 @@ sub expect_operation_object_fetch_content {
 					bucket => 'bucket-name',
 					key    => 'key-name',
 				],
-				expect_arguments => {
-					bucket => 'bucket-name',
-					key    => 'key-name',
-					method => 'GET',
-				},
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }
@@ -229,6 +232,10 @@ sub expect_operation_object_fetch_filename {
 					method => 'GET',
 					filename => 'foo',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }
@@ -247,12 +254,10 @@ sub expect_operation_object_fetch_callback {
 					method => 'GET',
 					filename => sub { },
 				],
-				expect_arguments => {
-					bucket => 'bucket-name',
-					key    => 'key-name',
-					method => 'GET',
-					filename => expect_coderef,
-				},
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }
@@ -270,12 +275,10 @@ sub expect_operation_object_head {
 					key    => 'key-name',
 					method => 'HEAD',
 				],
-				expect_arguments => {
-					bucket => 'bucket-name',
-					key    => 'key-name',
-					method => 'HEAD',
-					filename => undef,
-				},
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }

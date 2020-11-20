@@ -55,12 +55,12 @@ sub expect_operation_object_upload_create {
 					key         => 'some-key',
 					object_acl  => 'private',
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					encryption  => undef,
-					acl         => obj_isa ('Net::Amazon::S3::ACL::Canned'),
-				},
+					acl         => expectation_canned_acl ('private'),
+				),
 			},
 			"create upload with overloaded acl" => {
 				act_arguments => [
@@ -68,12 +68,12 @@ sub expect_operation_object_upload_create {
 					key         => 'some-key',
 					acl         => 'private',
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					encryption  => undef,
-					acl         => 'private',
-				},
+					acl         => expectation_canned_acl ('private'),
+				),
 			},
 			"create upload with acl_short" => {
 				act_arguments => [
@@ -81,12 +81,12 @@ sub expect_operation_object_upload_create {
 					key         => 'some-key',
 					acl_short   => 'private',
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					encryption  => undef,
-					acl         => 'private',
-				},
+					acl         => expectation_canned_acl ('private'),
+				),
 			},
 			"create upload with additional headers" => {
 				act_arguments => [
@@ -94,12 +94,13 @@ sub expect_operation_object_upload_create {
 					key         => 'some-key',
 					headers     => { x_amz_meta_additional => 'additional-header' },
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					encryption  => undef,
+					acl         => undef,
 					headers     => { x_amz_meta_additional => 'additional-header' },
-				},
+				),
 			},
 			"create upload with server-side encoding" => {
 				act_arguments => [
@@ -107,11 +108,12 @@ sub expect_operation_object_upload_create {
 					key         => 'some-key',
 					encryption  => 'AES256',
 				],
-				expect_arguments => {
-					bucket      => 'bucket-name',
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
 					encryption  => 'AES256',
-				},
+					acl         => undef,
+				),
 			},
 		}
 }

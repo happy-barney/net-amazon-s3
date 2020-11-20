@@ -52,6 +52,9 @@ sub expect_operation_bucket_tags_delete {
 				act_arguments => [
 					bucket      => 'bucket-name',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+				),
 			},
 		}
 }

@@ -47,6 +47,13 @@ sub expect_operation_object_upload_complete {
 					etags       => [ 'etag-1', 'etag-2' ],
 					part_numbers => [ 1, 2 ],
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					upload_id   => 42,
+					etags       => [ 'etag-1', 'etag-2' ],
+					part_numbers => [ 1, 2 ],
+				),
 			},
 		}
 }

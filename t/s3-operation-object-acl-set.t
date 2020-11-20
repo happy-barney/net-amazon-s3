@@ -72,6 +72,12 @@ sub expect_operation_object_acl_set {
 					key         => 'some-key',
 					acl         => 'private',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					acl         => expectation_canned_acl ('private'),
+					acl_xml     => undef,
+				),
 			},
 			"set object acl using acl_short (deprecated)" => {
 				act_arguments => [
@@ -79,6 +85,12 @@ sub expect_operation_object_acl_set {
 					key         => 'some-key',
 					acl_short   => 'public-read',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					acl         => expectation_canned_acl ('public-read'),
+					acl_xml     => undef,
+				),
 			},
 			"set object acl using acl_xml" => {
 				act_arguments => [
@@ -86,6 +98,12 @@ sub expect_operation_object_acl_set {
 					key         => 'some-key',
 					acl_xml     => 'some xml placeholder',
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'some-key',
+					acl         => undef,
+					acl_xml     => 'some xml placeholder',
+				),
 			},
 		}
 }

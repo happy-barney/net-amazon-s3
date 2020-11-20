@@ -53,6 +53,10 @@ sub expect_operation_bucket_tags_set {
 					bucket      => 'bucket-name',
 					tags        => { foo => 'bar' },
 				],
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					tags        => { foo => 'bar' },
+				),
 			},
 		}
 }

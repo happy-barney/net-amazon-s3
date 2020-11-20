@@ -56,12 +56,10 @@ sub expect_operation_object_head_api {
 					bucket => 'bucket-name',
 					key    => 'key-name',
 				],
-				expect_arguments => {
-					bucket => 'bucket-name',
-					key    => 'key-name',
-					method => 'HEAD',
-					filename => undef,
-				},
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }
@@ -78,11 +76,10 @@ sub expect_operation_object_head_client {
 					bucket => 'bucket-name',
 					key    => 'key-name',
 				],
-				expect_arguments => {
-					bucket => 'bucket-name',
-					key    => 'key-name',
-					method => 'HEAD',
-				},
+				expect_request => methods (
+					bucket      => expectation_bucket ('bucket-name'),
+					key         => 'key-name',
+				),
 			},
 		}
 }
