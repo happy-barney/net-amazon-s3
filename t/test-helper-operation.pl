@@ -301,17 +301,17 @@ sub expect_operation_plan {
 
 	my %expectations = map +($_ => $args{$_}), grep m/^expect_/, keys %args;
 
-	for my $implementation (sort keys %{ $args{implementations} }) {
-		my $act = $args{implementations}{$implementation};
+	for my $title (sort keys %{ $args{plan} }) {
+		my $plan = $args{plan}{$title};
 
-		for my $title (sort keys %{ $args{plan} }) {
-			my $plan = $args{plan}{$title};
+		for my $implementation (sort keys %{ $args{implementations} }) {
+			my $act = $args{implementations}{$implementation};
 
 			my %plan_expectations = map +($_ => $plan->{$_}), grep m/^expect_/, keys %{ $plan };
 
 			my @act_arguments = @{ $plan->{act_arguments} || [] };
 
-			expect_operation "$implementation / $title" =>
+			expect_operation "$title - using $implementation" =>
 				act => sub { $act->(@act_arguments) },
 				expect_operation => $args{expect_operation},,
 				%expectations,
