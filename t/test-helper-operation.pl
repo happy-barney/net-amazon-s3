@@ -138,6 +138,18 @@ sub _expectation_operation {
 		;
 }
 
+sub _expectation_request_authorization {
+	my ($title, %args) = @_;
+
+	my $got = $args{request}->http_request->header ('Authorization');
+
+	return _expectation
+		$title,
+		"Request authorization expectation",
+		Test::Deep::cmp_details ($got, $args{expect}),
+		;
+}
+
 sub _expectation_request_method {
 	my ($title, %args) = @_;
 
@@ -221,6 +233,7 @@ sub _expectation_request_content_xml {
 
 my %operation_request_tests = (
 	expect_request                  => \& _expectation_request_instance,
+	expect_request_authorization    => \& _expectation_request_authorization,
 	expect_request_content_xml      => \& _expectation_request_content_xml,
 	expect_request_headers          => \& _expectation_request_headers,
 	expect_request_method           => \& _expectation_request_method,
@@ -229,6 +242,9 @@ my %operation_request_tests = (
 
 sub expect_operation {
 	my ($title, %plan) = @_;
+
+	$plan{expect_request_authorization} = bool (1)
+		unless exists $plan{expect_request_authorization};
 
 	my $guard = Sub::Override->new (
 		'Net::Amazon::S3::_perform_operation',
