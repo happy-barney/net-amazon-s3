@@ -219,6 +219,14 @@ sub _expectation_request_content_xml {
 		;
 }
 
+my %operation_request_tests = (
+	expect_request                  => \& _expectation_request_instance,
+	expect_request_content_xml      => \& _expectation_request_content_xml,
+	expect_request_headers          => \& _expectation_request_headers,
+	expect_request_method           => \& _expectation_request_method,
+	expect_request_uri              => \& _expectation_request_uri,
+);
+
 sub expect_operation {
 	my ($title, %plan) = @_;
 
@@ -233,33 +241,14 @@ sub expect_operation {
 					expect    => $plan{expect_operation},
 					;
 
-				my $request_class = "$plan{expect_operation}::Request";
 				my $request = _build_operation_request ($operation, %args);
 
-				return unless _expectation_request_method       $title =>
-					request => $request,
-					expect  => $plan{expect_request_method},
-					;
-
-				return unless _expectation_request_uri          $title =>
-					request => $request,
-					expect  => $plan{expect_request_uri},
-					;
-
-				return unless _expectation_request_headers      $title =>
-					request => $request,
-					expect  => $plan{expect_request_headers},
-					;
-
-				return unless _expectation_request_content_xml  $title =>
-					request => $request,
-					expect  => $plan{expect_request_content_xml},
-					;
-
-				return unless _expectation_request_instance $title =>
-					request     => $request,
-					expect      => $plan{expect_request},
-					;
+				for my $test (sort keys %operation_request_tests) {
+					return unless $operation_request_tests{$test}->($title => (
+						request => $request,
+						expect  => $plan{$test},
+					));
+				}
 
 				pass $title;
 			};
