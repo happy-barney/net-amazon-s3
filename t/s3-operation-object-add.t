@@ -10,10 +10,12 @@ BEGIN { require "$FindBin::Bin/test-helper-operation.pl" }
 note "Client and API capabilities differs a lot";
 
 expect_operation_object_add_scalar (
-	'API / via Bucket' => \& api_object_add_scalar_via_bucket,
-	'API / via S3'     => \& api_object_add_scalar_via_s3,
-	'API / via Bucket / named arguments' => \& api_object_add_scalar_via_bucket_named,
-	'API / via S3 / named arguments'     => \& api_object_add_scalar_via_s3_named,
+	'API / via Bucket / legacy'          => \& api_add_object_scalar_bucket_legacy,
+	'API / via Bucket / positional'      => \& api_add_object_scalar_bucket_positional,
+	'API / via Bucket / named arguments' => \& api_add_object_scalar_bucket_named,
+	'API / via S3 / legacy'              => \& api_add_object_scalar_s3_legacy,
+	'API / via S3 / positional'          => \& api_add_object_scalar_s3_positional,
+	'API / via S3 / named arguments'     => \& api_add_object_scalar_s3_named,
 );
 
 expect_operation_object_add_file (
@@ -34,7 +36,7 @@ had_no_warnings;
 
 done_testing;
 
-sub api_object_add_scalar_via_bucket {
+sub api_add_object_scalar_bucket_legacy {
 	my (%args) = _api_expand_header_arguments @_;
 
 	build_default_api_bucket (%args)
@@ -45,16 +47,18 @@ sub api_object_add_scalar_via_bucket {
 		);
 }
 
-sub api_object_add_scalar_via_s3 {
+sub api_add_object_scalar_bucket_positional {
 	my (%args) = _api_expand_header_arguments @_;
 
-	build_default_api
+	build_default_api_bucket (%args)
 		->add_key (
-			\ %args
+			delete $args{key},
+			delete $args{value},
+			%args
 		);
 }
 
-sub api_object_add_scalar_via_bucket_named {
+sub api_add_object_scalar_bucket_named {
 	my (%args) = _api_expand_header_arguments @_;
 
 	build_default_api_bucket (%args)
@@ -62,7 +66,28 @@ sub api_object_add_scalar_via_bucket_named {
 		;
 }
 
-sub api_object_add_scalar_via_s3_named {
+sub api_add_object_scalar_s3_legacy {
+	my (%args) = _api_expand_header_arguments @_;
+
+	build_default_api
+		->add_key (\ %args)
+		;
+}
+
+sub api_add_object_scalar_s3_positional {
+	my (%args) = _api_expand_header_arguments @_;
+
+	build_default_api
+		->add_key (
+			delete $args{bucket},
+			delete $args{key},
+			delete $args{value},
+			%args,
+		)
+		;
+}
+
+sub api_add_object_scalar_s3_named {
 	my (%args) = _api_expand_header_arguments @_;
 
 	build_default_api

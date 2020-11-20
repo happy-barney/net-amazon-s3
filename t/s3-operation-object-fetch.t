@@ -8,12 +8,14 @@ use FindBin;
 BEGIN { require "$FindBin::Bin/test-helper-operation.pl" }
 
 expect_operation_object_fetch (
-	'API / fetch'                             => \& api_object_fetch,
-	'API / fetch into file'                   => \& api_object_fetch_file,
-	'API / fetch / named arguments'           => \& api_object_fetch_named,
-	'API / fetch into file / named arguments' => \& api_object_fetch_file_named,
-	'API / S3->get_key'                       => \& api_object_s3_fetch,
-	'API / S3->get_key / named arguments'     => \& api_object_s3_fetch_named,
+	'API / S3->get_key / legacy'                        => \& api_get_key_s3_legacy,
+	'API / S3->get_key / positional'                    => \& api_get_key_s3_positional,
+	'API / S3->get_key / named arguments'               => \& api_get_key_s3_named,
+	'API / S3->get_key / into file'                     => \& api_get_key_s3_file,
+	'API / Bucket->get_key / legacy'                    => \& api_get_key_legacy,
+	'API / Bucket->get_key / named arguments'           => \& api_get_key_named,
+	'API / Bucket->get_key into file / legacy'          => \& api_get_key_file_legacy,
+	'API / Bucket->get_key into file / named arguments' => \& api_get_key_file_named,
 );
 
 expect_operation_object_head (
@@ -39,23 +41,38 @@ had_no_warnings;
 
 done_testing;
 
-sub api_object_s3_fetch {
+sub api_get_key_s3_legacy {
 	my (%args) = @_;
 
-	build_default_api
-		->get_key (\ %args)
-		;
+	build_default_api->get_key (\ %args);
 }
 
-sub api_object_s3_fetch_named {
+sub api_get_key_s3_positional {
 	my (%args) = @_;
 
-	build_default_api
-		->get_key (%args)
-		;
+	build_default_api->get_key (
+		delete $args{bucket},
+		delete $args{key},
+		%args
+	);
 }
 
-sub api_object_fetch {
+sub api_get_key_s3_named {
+	my (%args) = @_;
+
+	build_default_api->get_key (%args);
+}
+
+sub api_get_key_s3_file {
+	my (%args) = @_;
+
+	build_default_api->get_key (
+		filename => \ delete $args{filename},
+		%args,
+	);
+}
+
+sub api_get_key_legacy {
 	my (%args) = @_;
 
 	build_default_api_bucket (%args)
@@ -67,7 +84,7 @@ sub api_object_fetch {
 		;
 }
 
-sub api_object_fetch_named {
+sub api_get_key_named {
 	my (%args) = @_;
 
 	build_default_api_bucket (%args)
@@ -75,7 +92,7 @@ sub api_object_fetch_named {
 		;
 }
 
-sub api_object_fetch_file {
+sub api_get_key_file_legacy {
 	my (%args) = @_;
 
 	build_default_api_bucket (%args)
@@ -87,7 +104,7 @@ sub api_object_fetch_file {
 		;
 }
 
-sub api_object_fetch_file_named {
+sub api_get_key_file_named {
 	my (%args) = @_;
 
 	$args{filename} = \ delete $args{filename};

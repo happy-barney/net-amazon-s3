@@ -330,16 +330,13 @@ sub list_bucket_all {
 	return $all;
 }
 
-# compat wrapper; deprecated as of 2005-03-23
 sub add_key {
 	my $self = shift;
-	my %args = Net::Amazon::S3::Utils->parse_arguments_with_bucket_and_object (\@_);
+	my %args = Net::Amazon::S3::Utils->parse_arguments_with_bucket_and_object (\@_, 'value' => { positional => 1 });
 
-	my $bucket = $self->bucket (delete $args{bucket});
-	return $bucket->add_key (%args);
+	return $self->bucket (delete $args{bucket})->add_key (%args);
 }
 
-# compat wrapper; deprecated as of 2005-03-23
 sub get_key {
 	my $self = shift;
 	my %args = Net::Amazon::S3::Utils->parse_arguments_with_bucket_and_object (\@_);
@@ -348,14 +345,12 @@ sub get_key {
 	return $bucket->get_key (%args);
 }
 
-# compat wrapper; deprecated as of 2005-03-23
 sub head_key {
 	my ( $self, $conf ) = @_;
 	my $bucket = $self->bucket (delete $conf->{bucket});
 	return $bucket->head_key( $conf->{key} );
 }
 
-# compat wrapper; deprecated as of 2005-03-23
 sub delete_key {
 	my $self = shift;
 	my %args = Net::Amazon::S3::Utils->parse_arguments_with_bucket_and_object (\@_);
@@ -387,6 +382,13 @@ sub _urlencode {
 	my ( $self, $unencoded ) = @_;
 	return uri_escape_utf8( $unencoded, '^A-Za-z0-9_\-\.' );
 }
+
+*create_bucket    = *add_bucket;
+*list_buckets     = *buckets;
+*list_objects     = *list_bucket;
+*list_objects_all = *list_bucket_all;
+*put_object       = *add_key;
+*get_object       = *get_key;
 
 __PACKAGE__->meta->make_immutable;
 
@@ -498,8 +500,10 @@ I highly recommend reading all about S3, but in a nutshell data is
 stored in values. Values are referenced by keys, and keys are stored
 in buckets. Bucket names are global.
 
-Note: This is the legacy interface, please check out
-L<Net::Amazon::S3::Client> instead.
+This module provides raw, procedural, mostly data-structure driven API, similar
+to other AWS clients.
+
+If you prefer more OOP-ish interface, try L<Net::Amazon::S3::Client>.
 
 Development of this code happens here: https://github.com/rustyconover/net-amazon-s3
 
@@ -671,26 +675,61 @@ the L<LWP::ConnCache> in the parent:
     $s3->ua( LWP::UserAgent->new( 
         keep_alive => 0, requests_redirectable => [qw'GET HEAD DELETE PUT POST'] );
 
+=head2 bucket BUCKET
+
+Takes a scalar argument, the name of the bucket you're creating
+
+Returns an (unverified) bucket object from an account. Does no network access.
+
+=head1 S3 OPERATIONS ON SERVICE
+
 =head2 buckets
 
-Returns undef on error, else hashref of results
+Provides operation L<ListBuckets|https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListBuckets.html>.
+
+	my $result = $s3->buckets;
+	die $s3->errstr if $s3->err;
+	for my $bucket (@{ $result->{buckets} }) {
+		say "Found bucket: $bucket->{bucket}"
+	}
+
+Lists all buckets owned by authenticated user.
+
+In case of error it reports it and returns C<undef> (refer L</"ERROR HANDLING">).
+
+Returns hashref with bucket list otherwise.
+
+	$result = {
+		owner_id => ...,
+		owner_displayname => ...,
+		buckets => [
+			{ bucket => 'bucket name', creation_date => 'timestamp' },
+			...
+		],
+	};
+
+Method takes no parameters.
+
+=head1 S3 OPERATIONS ON BUCKET
+
+Every operation on bucket recognizes C<bucket> parameter as positional.
 
 =head2 add_bucket
+
+Provides operation L<CreateBucket|https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html>.
 
 	# Create new bucket with default location
 	my $bucket = $s3->add_bucket ('new-bucket');
 
 	# Create new bucket in another location
 	my $bucket = $s3->add_bucket ('new-bucket', location_constraint => 'eu-west-1');
-	my $bucket = $s3->add_bucket ('new-bucket', { location_constraint => 'eu-west-1' });
 	my $bucket = $s3->add_bucket (bucket => 'new-bucket', location_constraint => 'eu-west-1');
-	my $bucket = $s3->add_bucket ({ bucket => 'new-bucket', location_constraint => 'eu-west-1' });
 
-Method creates and returns new bucket.
+Creates new bucket.
 
 In case of error it reports it and returns C<undef> (refer L</"ERROR HANDLING">).
 
-Recognized positional arguments (refer L</"CALLING CONVENTION">)
+Recognized arguments (refer L</"CALLING CONVENTION">)
 
 =over
 
@@ -700,21 +739,16 @@ Required, recognized as positional.
 
 The name of the bucket you want to add.
 
-=back
+=item acl (optional)
 
-Recognized optional arguments
-
-=over
-
-=item acl
+I<Available since v0.94>
 
 	acl => 'private'
 	acl => Net::Amazon::S3::ACL::Canned->PRIVATE
 	acl => Net::Amazon::S3::ACL::Set->grant_read (email => 'foo@bar.baz')
 
-I<Available since v0.94>
-
-Set ACL to the newly created bucket. Refer L<Net::Amazon::S3::ACL> for possibilities.
+When specified set ACL to the newly created bucket.
+Refer L<Net::Amazon::S3::ACL> for more.
 
 =item acl_short (deprecated)
 
@@ -722,12 +756,10 @@ I<Deprecated since v0.94>
 
 When specified its value is used to populate C<acl> argument (unless it exists).
 
-=item location_constraint
-
-Optional.
+=item location_constraint (optional)
 
 Sets the location constraint of the new bucket. If left unspecified, the
-default S3 datacenter location will be used.
+default location will be used (in case of AWS its C<us-east-1>).
 
 This library recognizes regions according Amazon S3 documentation
 
@@ -745,65 +777,59 @@ L<https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html#API_Crea
 
 =back
 
-Provides operation L<CreateBucket|https://docs.aws.amazon.com/AmazonS3/latest/API/API_CreateBucket.html>.
-
-=head2 bucket BUCKET
-
-Takes a scalar argument, the name of the bucket you're creating
-
-Returns an (unverified) bucket object from an account. Does no network access.
-
 =head2 delete_bucket
+
+Provides operation L<"DeleteBucket"|https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucket.html>
 
 	$s3->delete_bucket ($bucket);
 	$s3->delete_bucket (bucket => $bucket);
 
 Deletes bucket from account.
 
+In case of error it reports it and returns C<false> (refer L</"ERROR HANDLING">).
+
 Returns C<true> if the bucket is successfully deleted.
 
-Returns C<false> and reports an error otherwise (refer L</"ERROR HANDLING">)
-
-Positional arguments (refer L</"CALLING CONVENTION">)
+Recognized arguments (refer L</"CALLING CONVENTION">)
 
 =over
 
 =item bucket
 
-Required.
+Required, recognized as positional.
 
-The name of the bucket or L<Net::Amazon::S3::Bucket> instance you want to delete.
+The name of the bucket you want to delete or its L<Net::Amazon::S3::Bucket> instance.
 
 =back
-
-Provides operation L<"DeleteBucket"|https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteBucket.html>
 
 =head2 list_bucket
 
-List all keys in this bucket.
+Provides operation L<"ListObjects"|https://docs.aws.amazon.com/AmazonS3/latest/API/API_ListObjects.html>
 
-Takes a hashref of arguments:
+	my $result = $s3->list_bucket ($bucket);
+	my $result = $s3->list_bucket ($bucket, prefix => ..., delimiter => ..., ...);
+	my $result = $s3->list_bucket (bucket => $bucket, prefix => ..., delimiter => ..., ...);
 
-MANDATORY
+Lists some or all keys in bucket (max 1_000).
+
+In case of error it reports it and returns C<undef> (refer L</"ERROR HANDLING">).
+
+Recognized arguments (refer L</"CALLING CONVENTION">)
 
 =over
 
 =item bucket
 
-The name of the bucket you want to list keys on
+Required, recognized as positional.
 
-=back
-
-OPTIONAL
-
-=over
+The name of the bucket you want to list keys on or its L<Net::Amazon::S3::Bucket> instance.
 
 =item prefix
 
+Default: empty string
+
 Restricts the response to only contain results that begin with the
-specified prefix. If you omit this optional argument, the value of
-prefix for your query will be the empty string. In other words, the
-results will be not be restricted by prefix.
+specified prefix.
 
 =item delimiter
 
@@ -825,7 +851,7 @@ request, keys in the result set will not be rolled-up and neither
 the CommonPrefixes collection nor the NextMarker element will be
 present in the response.
 
-=item max-keys
+=item max_keys
 
 This optional argument limits the number of results returned in
 response to your query. Amazon S3 will return no more than this
@@ -854,23 +880,29 @@ If C<marker> is omitted,the first page of results is returned.
 
 =back
 
+Returns hashref on success.
 
-Returns undef on error and a hashref of data on success:
-
-The hashref looks like this:
-
-  {
-        bucket          => $bucket_name,
-        prefix          => $bucket_prefix,
-        common_prefixes => [$prefix1,$prefix2,...]
-        marker          => $bucket_marker,
-        next_marker     => $bucket_next_available_marker,
-        max_keys        => $bucket_max_keys,
-        is_truncated    => $bucket_is_truncated_boolean
-        keys            => [$key1,$key2,...]
-   }
-
-Explanation of bits of that:
+	$result = {
+		bucket          => ...,
+		prefix          => ...,
+		marker          => ...,
+		next_marker     => ...,
+		max_keys        => ...,
+		is_truncated    => $key_list_is_truncated_boolean,
+		keys            => [ {
+			key                 => 'object key',
+			last_modified       => 'timestamp',
+			etag                => ...,
+			size                => ...,
+			storage_class       => ...,
+			owner_id            => ...,
+			owner_displayname   => ...,
+		}, ... ],
+		common_prefixes => [
+			'prefix-1',
+			....,
+		],
+	};
 
 =over
 
@@ -882,11 +914,10 @@ these prefixes by making another request with the prefix parameter.
 
 =item is_truncated
 
-B flag that indicates whether or not all results of your query were
+Boolean flag that indicates whether or not all results of your query were
 returned in this response. If your results were truncated, you can
 make a follow-up paginated request using the Marker parameter to
 retrieve the rest of the results.
-
 
 =item next_marker
 
@@ -900,25 +931,127 @@ sent with the request.
 
 =back
 
-Each key is a hashref that looks like this:
-
-     {
-        key           => $key,
-        last_modified => $last_mod_date,
-        etag          => $etag, # An MD5 sum of the stored content.
-        size          => $size, # Bytes
-        storage_class => $storage_class # Doc?
-        owner_id      => $owner_id,
-        owner_displayname => $owner_name
-    }
-
 =head2 list_bucket_all
 
-List all keys in this bucket without having to worry about
-'marker'. This is a convenience method, but may make multiple requests
-to S3 under the hood.
+	my $result = $s3->list_bucket_all ($bucket);
+	my $result = $s3->list_bucket_all ($bucket, prefix => ..., ...);
 
-Takes the same arguments as list_bucket.
+List all keys in this bucket without having to worry about 'marker'
+and max keys limitation. It may make multiple requests under the hood.
+
+Takes same arguments and returns same data as C<list_bucket>
+
+=head1 S3 OPERATIONS ON OBJECT
+
+Every operation on bucket recognizes C<bucket> and C<key> parameters as positional.
+
+=head2 add_key
+
+Provides operation L<"PutObject"|https://docs.aws.amazon.com/AmazonS3/latest/API/API_PutObject.html>
+
+	# add key from memory
+	$s3->add_key ($bucket, $key, 'value');
+	$s3->add_key ($bucket, $key, value => 'value');
+	$s3->add_key (bucket => $bucket, key => $key, value => 'foo');
+
+	# add key from file
+	$s3->add_key ($bucket, $key, \ 'filename');
+	$s3->add_key ($bucket, $key, value => \ 'filename');
+	$s3->add_key (bucket => $bucket, key => $key, value => \ 'filename');
+
+Adds an object to a bucket.
+
+In case of error it reports it and returns C<false> (refer L</"ERROR HANDLING">).
+
+In case of success it returns C<true>.
+
+Recognized arguments (refer L</"CALLING CONVENTION">)
+
+=over
+
+=item bucket
+
+Required, recognized as positional.
+
+The name of the bucket you want to add object to or its L<Net::Amazon::S3::Bucket> instance.
+
+=item key
+
+Required, recognized as positional.
+
+Object name inside bucket.
+
+=item value
+
+Required, recognized as positional.
+
+Object's data to upload.
+
+=over
+
+=item →
+
+scalar, contains raw data to upload
+
+=item →
+
+scalarref, containing local file name to upload
+
+=back
+
+=head2 get_key
+
+Provides operation L<"GetObject"|https://docs.aws.amazon.com/AmazonS3/latest/API/API_GetObject.html>
+
+	$s3->get_key ($bucket, $key);
+	$s3->get_key ($bucket, $key, \ $into_filename);
+	$s3->get_key (bucket => $bucket, key => $key);
+	$s3->get_key (bucket => $bucket, key => $key, filename => \ $into_filename);
+
+Fetch object from S3 service.
+
+In case of error it reports it and returns C<false> (refer L</"ERROR HANDLING">).
+
+In case of success it returns C<true> (hashref, see result value description below).
+
+Recognized arguments (refer L</"CALLING CONVENTION">)
+
+=over
+
+=item bucket
+
+Required, recognized as positional.
+
+The name of the bucket or its L<Net::Amazon::S3::Bucket> instance.
+
+=item key
+
+Required, recognized as positional.
+
+Object name inside bucket.
+
+=item filename
+
+Optional, recognized as positional
+
+When specified received data will be stored into specified file name and
+corresponding field in result value will be set to empty string.
+
+=back
+
+Result value is a hashref looking like
+
+	$result = {
+		content_length => ...,
+		content_type   => ...,
+		etag           => ...,
+		value          => 'object content',
+		# plus every http header provided by service (lowercased)
+		lc_header      => 'header value',
+		...,
+	};
+
+=head1 INTERNAL METHODS
 
 =head2 _perform_operation
 
@@ -926,10 +1059,11 @@ Takes the same arguments as list_bucket.
         # ... operation request parameters
     ));
 
-Internal operation implementation method, takes request construction parameters,
-performs necessary HTTP requests(s) and returns Response instance.
+Internal method implementing operation. Takes operation name and request
+constructor parameters, performs necessary HTTP requests(s) and returns
+operation Response instance.
 
-Method takes same named parameters as realted Request class.
+Method takes same named parameters as related Request class.
 
 Method provides available contextual parameters by default (eg s3, bucket)
 

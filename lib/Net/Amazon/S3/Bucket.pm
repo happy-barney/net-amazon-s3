@@ -27,7 +27,6 @@ has 'region' => (
 
 __PACKAGE__->meta->make_immutable;
 
-# returns bool
 sub add_key {
 	my $self = shift;
 	my %args = Net::Amazon::S3::Utils->parse_arguments_with_object (\@_, value => {positional => 1});

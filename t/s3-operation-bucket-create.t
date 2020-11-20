@@ -8,10 +8,11 @@ use FindBin;
 BEGIN { require "$FindBin::Bin/test-helper-operation.pl" }
 
 expect_operation_bucket_create (
-	'API / legacy'                      => \& api_bucket_create_legacy,
-	'API / named arguments'             => \& api_bucket_create_named,
-	'API / trailing named arguments'    => \& api_bucket_create_trailing_named,
-	'API / trailing configuration hash' => \& api_bucket_create_trailing_conf,
+	'API / legacy'                      => \& api_add_bucket_legacy,
+	'API / named arguments'             => \& api_add_bucket_named,
+	'API / trailing named arguments'    => \& api_add_bucket_trailing_named,
+	'API / trailing configuration hash' => \& api_add_bucket_trailing_conf,
+	'API / create_bucket'               => \& api_create_bucket_named,
 	'Client' => \& client_bucket_create,
 );
 
@@ -19,28 +20,34 @@ had_no_warnings;
 
 done_testing;
 
-sub api_bucket_create_legacy {
+sub api_add_bucket_legacy {
 	my (%args) = @_;
 
 	build_default_api->add_bucket (\ %args);
 }
 
-sub api_bucket_create_named {
+sub api_add_bucket_named {
 	my (%args) = @_;
 
 	build_default_api->add_bucket (%args);
 }
 
-sub api_bucket_create_trailing_named {
+sub api_add_bucket_trailing_named {
 	my (%args) = @_;
 
 	build_default_api->add_bucket (delete $args{bucket}, %args);
 }
 
-sub api_bucket_create_trailing_conf {
+sub api_add_bucket_trailing_conf {
 	my (%args) = @_;
 
 	build_default_api->add_bucket (delete $args{bucket}, \%args);
+}
+
+sub api_create_bucket_named {
+	my (%args) = @_;
+
+	build_default_api->create_bucket (%args);
 }
 
 sub client_bucket_create {
