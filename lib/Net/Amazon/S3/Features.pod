@@ -45,138 +45,263 @@ See L<Net::Amazon::S3::Error::Handler::Confess>
 
 For details see corresponding C<< api-operation >> / C<< client-operation >> test file
 
+Lines leading with C<-> describes operation request argument.
+
+Lines leading with C<+> describes operation response element.
+
+Token wrapped in C<« »> represents named argument.
+
 List of L<"Amazon S3 Operations"|https://docs.aws.amazon.com/AmazonS3/latest/API/API_Operations_Amazon_Simple_Storage_Service.html>
 
- |-------------------------+---------------------------------+-----------------------------------|
- | operation               | Net::Amazon::S3 (API)           | Net::Amazon::S3::Client           |
- |-------------------------+---------------------------------+-----------------------------------|
- | AbortMultipartUpload    | ❌                              | object->abort_multipart_upload    |
- | returns                 | ❌                              | http response                     |
- | errors                  | ❌                              | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | CompleteMultipartUpload | ❌                              | object->complete_multipart_upload |
- | returns                 | ❌                              | http response                     |
- | errors                  | ❌                              | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | CreateBucket            | s3->add_bucket                  | client->create_bucket             |
- | - with region           | ✅                              | ✅                                |
- | returns                 | Bucket instance                 | Bucket instance                   |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | CreateMultipartUpload   | ❌                              | object->initiate_multipart_upload |
- | returns                 | ❌                              | http response                     |
- | errors                  | ❌                              | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | DeleteBucket            | s3->delete_bucket               | bucket->delete                    |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | DeleteBucketTagging     | bucket->delete_tags             | bucket->delete_tags               |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | DeleteObject            | bucket->delete_key              | bucket->object->delete            |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | DeleteObjects           | bucket->delete_multi_object     | bucket->delete_multi_object       |
- | - auto chunks           | ✅                              | ✅                                |
- | returns                 | boolean                         | HTTP::Response object             |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | DeleteObjectTagging     | bucket->delete_tags             | bucket->object->delete_tags       |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | GetBucketAcl            | bucket->get_acl                 | bucket->acl                       |
- | returns                 | response body (XML)             | response body (XML)               |
- |                         | (undef on Not Found)            |                                   |
- | errors                  | set network error               | confess                           |
- |                         | (none on Not Found)             |                                   |
- |-------------------------+---------------------------------+-----------------------------------|
- | GetBucketLocation       | bucket->get_location_constraint | bucket->get_location_constraint   |
- | returns                 | location (Str)                  | location (Str)                    |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | GetObject               | bucket->get_key                 | bucket->object->get               |
- | - into file             | ✅, bucket->get_key_filename    | ✅, bucket->object->get_filename  |
- | - into callback         | ❌                              | ✅, bucket->object->get_callback  |
- | returns                 | struct with value               | value                             |
- |                         | (undef on Not Found)            |                                   |
- | errors                  | set network error               | confess                           |
- |                         | (none on Not Found)             |                                   |
- |-------------------------+---------------------------------+-----------------------------------|
- | GetObjectAcl            | bucket->get_acl                 | ❌                                |
- | returns                 | response body (XML)             | ❌                                |
- |                         | (undef on Not Found)            | ❌                                |
- | errors                  | set network error               | ❌                                |
- |                         | (none on Not Found)             | ❌                                |
- |-------------------------+---------------------------------+-----------------------------------|
- | ListBuckets             | s3->buckets                     | client->buckets                   |
- | returns                 | Bucket instances in struct      | Bucket instances (list)           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | ListObjects             | s3->list_bucket                 | bucket->list                      |
- | - common prefixes       | ✅                              | ❌                                |
- | - list all              | ✅, s3->list_bucket_all         | ✅                                |
- | returns                 | struct with list                | iterator (Object list)            |
- | errors                  | set S3 err                      | confess during iteration          |
- |-------------------------+---------------------------------+-----------------------------------|
- | ListObjectsV2           | ❌                              | ❌                                |
- |-------------------------+---------------------------------+-----------------------------------|
- | ListParts               | ❌                              | ❌                                |
- |-------------------------+---------------------------------+-----------------------------------|
- | PutBucketAcl            | bucket->set_acl                 | bucket->set_acl                   |
- | - with canned acl       | ✅, as acl                      | ✅, as acl                        |
- | - with explicit acl     | ✅, as acl                      | ✅, as acl                        |
- | - with xml acl          | ✅, as acl_xml                  | ✅, as acl_xml                    |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | PutBucketTagging        | bucket->add_tags                | bucket->add_tags                  |
- | - with canned acl       | ✅, as acl                      | ✅, as acl                        |
- | - with explicit acl     | ✅, as acl                      | ✅, as acl                        |
- | - with xml acl          | ✅, as acl_xml                  | ✅, as acl_xml                    |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | PutObject               | bucket->add_key                 | bucket->object->put               |
- | returns                 | boolean                         | empty string                      |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | PutObjectAcl            | bucket->set_acl                 | object->set_acl                   |
- | - with canned acl       | ✅, as acl                      | ✅, as acl                        |
- | - with explicit acl     | ✅, as acl                      | ✅, as acl                        |
- | - with xml acl          | ✅, as acl_xml                  | ✅, as acl_xml                    |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | PutObjectTagging        | bucket->add_tags                | bucket->object->add_tags          |
- | - with canned acl       | ✅, as acl                      | ✅, as acl                        |
- | - with explicit acl     | ✅, as acl                      | ✅, as acl                        |
- | - with xml acl          | ✅, as acl_xml                  | ✅, as acl_xml                    |
- | returns                 | boolean                         | boolean                           |
- | errors                  | set S3 err                      | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | RestoreObject           | ❌                              | bucket->object->restore           |
- | returns                 | ❌                              | http response                     |
- | errors                  | ❌                              | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | UploadPart              | ❌                              | bucket->object->put_part          |
- | - from value            | ❌                              | ✅                                |
- | - from file             | ❌                              | ❌                                |
- | - from file chunk       | ❌                              | ❌                                |
- | returns                 | ❌                              | http response                     |
- | errors                  | ❌                              | confess                           |
- |-------------------------+---------------------------------+-----------------------------------|
- | object-copy             | bucket->copy_key                | ❌                                |
- | returns                 | boolean                         | ❌                                |
- | errors                  | set S3 err                      | ❌                                |
- |-------------------------+---------------------------------+-----------------------------------|
- | object-head             |                                 | ❌                                |
- | returns                 | boolean                         | ❌                                |
- | errors                  | set S3 err                      | ❌                                |
- |-------------------------+---------------------------------+-----------------------------------|
+ |----------------------------+---------------------------------+-----------------------------------|
+ | operation                  | Net::Amazon::S3 (API)           | Net::Amazon::S3::Client           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | AbortMultipartUpload       | ❌                              | object->abort_multipart_upload    |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | ❌                              | http response                     |
+ | errors                     | ❌                              | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | CompleteMultipartUpload    | ❌                              | object->complete_multipart_upload |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | + expiration               | ❌                              | ❌                                |
+ | + encryption               | ❌                              | ❌                                |
+ | + encryption key id        | ❌                              | ❌                                |
+ | + version id               | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | ❌                              | http response                     |
+ | errors                     | ❌                              | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | CreateBucket               | s3->add_bucket                  | client->create_bucket             |
+ | - with region              | ✅                              | ✅                                |
+ | - with canned acl          | ✅                              | ✅                                |
+ | - with explicit acl        | ✅                              | ✅                                |
+ | - with object lock         | ❌                              | ❌                                |
+ | returns                    | Bucket instance                 | Bucket instance                   |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | CreateMultipartUpload      | ❌                              | object->initiate_multipart_upload |
+ | - with expect bucket owner | ❌                              | ✅, indirect via headers arg      |
+ | - with request payer       | ❌                              | ✅, indirect via headers arg      |
+ | - with canned acl          | ❌                              | ✅, from args / object            |
+ | - with explicit acl        | ❌                              | ✅, from args / object            |
+ | - with encryption          | ❌                              | ✅, from object                   |
+ | - with storage class       | ❌                              | ✅, indirect via headers arg      |
+ | - with content-disposition | ❌                              | ✅, indirect via headers arg      |
+ | - with content-encoding    | ❌                              | ✅, indirect via headers arg      |
+ | - with content-type        | ❌                              | ✅, indirect via headers arg      |
+ | - with content-language    | ❌                              | ✅, indirect via headers arg      |
+ | - with expires             | ❌                              | ✅, indirect via headers arg      |
+ | - with website redirect    | ❌                              | ✅, indirect via headers arg      |
+ | - with encryption-*        | ❌                              | ✅, indirect via headers arg      |
+ | - with tagging             | ❌                              | ✅, indirect via headers arg      |
+ | - with object lock *       | ❌                              | ✅, indirect via headers arg      |
+ | + encryption               | ❌                              | ❌                                |
+ | + encryption-*             | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | + abort date               | ❌                              | ❌                                |
+ | + abort rule id            | ❌                              | ❌                                |
+ | returns                    | ❌                              | http response                     |
+ | errors                     | ❌                              | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | DeleteBucket               | s3->delete_bucket               | bucket->delete                    |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | DeleteBucketTagging        | bucket->delete_tags             | bucket->delete_tags               |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | DeleteObject               | bucket->delete_key              | bucket->object->delete            |
+ | - with version id          | ❌                              | ❌                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with mfa                 | ❌                              | ❌                                |
+ | - with bypass retention    | ❌                              | ❌                                |
+ | + delete marker            | ❌                              | ❌                                |
+ | + version id               | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | DeleteObjects              | bucket->delete_multi_object     | bucket->delete_multi_object       |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with quiet               | ❌, implicit true               | ❌, implicit true                 |
+ | - with version ids         | ❌                              | ❌                                |
+ | - with mfa                 | ❌                              | ❌                                |
+ | - with bypass retention    | ❌                              | ❌                                |
+ | - with delete marker       | ❌                              | ❌                                |
+ | + DeleteResult             | ❌                              | ❌                                |
+ | + partial errors           | ❌                              | ❌                                |
+ | + delete marker            | ❌                              | ❌                                |
+ | + version id               | ❌                              | ❌                                |
+ | automatic chunks           | ✅                              | ✅                                |
+ | returns                    | boolean                         | HTTP::Response object             |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | DeleteObjectTagging        | bucket->delete_tags             | bucket->object->delete_tags       |
+ | - with version id          | ✅, via «version_id»            | ✅, via «version_id»              |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | + version id               | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | GetBucketAcl               | bucket->get_acl                 | bucket->acl                       |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | + parse result XML         | ❌                              | ❌                                |
+ | returns                    | response body (XML)             | response body (XML)               |
+ |                            | (undef on Not Found)            |                                   |
+ | errors                     | set network error               | confess                           |
+ |                            | (none on Not Found)             |                                   |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | GetBucketLocation          | bucket->get_location_constraint | bucket->get_location_constraint   |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | returns                    | location (Str)                  | location (Str)                    |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | GetBucketTagging           | ❌                              | ❌                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | + parse result XML         | ❌                              | ❌                                |
+ | returns                    | ❌                              | ❌                                |
+ | errors                     | ❌                              | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | GetObject                  | bucket->get_key                 | bucket->object->get               |
+ | - into file                | ✅, bucket->get_key_filename    | ✅, bucket->object->get_filename  |
+ | - into callback            | ❌                              | ✅, bucket->object->get_callback  |
+ | - with version id          | ❌                              | ❌                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with if-match            | ❌                              | ❌                                |
+ | - with if-modified-since   | ❌                              | ❌                                |
+ | - with if-none-match       | ❌                              | ❌                                |
+ | - with if-unmodified-since | ❌                              | ❌                                |
+ | - with range               | ❌                              | ❌                                |
+ | - with accept-ranges       | ❌                              | ❌                                |
+ | - with encryption-*        | ❌                              | ❌                                |
+ | - with response-*          | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | + delete marker            | ❌                              | ❌                                |
+ | + expiration               | ❌                              | ❌                                |
+ | + restore                  | ❌                              | ❌                                |
+ | + last-modified            | ❌                              | ❌                                |
+ | + missing meta             | ❌                              | ❌                                |
+ | + version id               | ❌                              | ❌                                |
+ | + website location         | ❌                              | ❌                                |
+ | + encryption-*             | ❌                              | ❌                                |
+ | + storage class            | ❌                              | ❌                                |
+ | + replication status       | ❌                              | ❌                                |
+ | + mp parts count           | ❌                              | ❌                                |
+ | + tagging count            | ❌                              | ❌                                |
+ | + object-lock-*            | ❌                              | ❌                                |
+ | returns                    | struct with value               | value                             |
+ |                            | (undef on Not Found)            |                                   |
+ | errors                     | set network error               | confess                           |
+ |                            | (none on Not Found)             |                                   |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | GetObjectAcl               | bucket->get_acl                 | ❌                                |
+ | - with version id          | ❌                              | ❌                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | response body (XML)             | ❌                                |
+ |                            | (undef on Not Found)            | ❌                                |
+ | errors                     | set network error               | ❌                                |
+ |                            | (none on Not Found)             | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | GetObjectTagging           | ❌                              | ❌                                |
+ | - with version id          | ❌                              | ❌                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | + parse result XML         | ❌                              | ❌                                |
+ | returns                    | ❌                              | ❌                                |
+ | errors                     | ❌                              | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | ListBuckets                | s3->buckets                     | client->buckets                   |
+ | returns                    | Bucket instances in struct      | Bucket instances (list)           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | ListMultipartUploads       | ❌                              | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | ListObjects                | s3->list_bucket                 | bucket->list                      |
+ | - common prefixes          | ✅                              | ❌                                |
+ | - list all                 | ✅, s3->list_bucket_all         | ✅                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with encoding-type       | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | struct with list                | iterator (Object list)            |
+ | errors                     | set S3 err                      | confess during iteration          |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | ListObjectsV2              | ❌                              | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | ListObjectVersions         | ❌                              | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | ListParts                  | ❌                              | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | PutBucketAcl               | bucket->set_acl                 | bucket->set_acl                   |
+ | - with canned acl          | ✅, as acl                      | ✅, as acl                        |
+ | - with explicit acl        | ✅, as acl                      | ✅, as acl                        |
+ | - with xml acl             | ✅, as acl_xml                  | ✅, as acl_xml                    |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | PutBucketTagging           | bucket->add_tags                | bucket->add_tags                  |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | PutObject                  | bucket->add_key                 | bucket->object->put               |
+ | returns                    | boolean                         | empty string                      |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | PutObjectAcl               | bucket->set_acl                 | object->set_acl                   |
+ | - with canned acl          | ✅, as acl                      | ✅, as acl                        |
+ | - with explicit acl        | ✅, as acl                      | ✅, as acl                        |
+ | - with xml acl             | ✅, as acl_xml                  | ✅, as acl_xml                    |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with version id          | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | PutObjectTagging           | bucket->add_tags                | bucket->object->add_tags          |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | returns                    | boolean                         | boolean                           |
+ | errors                     | set S3 err                      | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | RestoreObject              | ❌                              | bucket->object->restore           |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with version id          | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | ❌                              | http response                     |
+ | errors                     | ❌                              | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | UploadPart                 | ❌                              | bucket->object->put_part          |
+ | - from value               | ❌                              | ✅                                |
+ | - from file                | ❌                              | ❌                                |
+ | - from file chunk          | ❌                              | ❌                                |
+ | - with expect bucket owner | ❌                              | ❌                                |
+ | - with request payer       | ❌                              | ❌                                |
+ | - with encryption          | ❌                              | ❌                                |
+ | + request charged          | ❌                              | ❌                                |
+ | returns                    | ❌                              | http response                     |
+ | errors                     | ❌                              | confess                           |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | object-copy                | bucket->copy_key                | ❌                                |
+ | returns                    | boolean                         | ❌                                |
+ | errors                     | set S3 err                      | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
+ | object-head                |                                 | ❌                                |
+ | returns                    | boolean                         | ❌                                |
+ | errors                     | set S3 err                      | ❌                                |
+ |----------------------------+---------------------------------+-----------------------------------|
 
 =head2 TODO plan (asorted, without time-plan)
 
