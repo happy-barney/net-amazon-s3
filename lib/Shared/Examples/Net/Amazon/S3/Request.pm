@@ -45,7 +45,7 @@ sub _canonical_xml {
 sub _test_meta_build_http_request {
 	my ($self, %params) = @_;
 
-	return $self->_build_signed_request (%params);
+	$self->_build_signed_request (%params)->_build_request;
 }
 
 sub _test_class {
@@ -110,7 +110,7 @@ sub expect_request_uri {
 	local $Test::Builder::Level = $Test::Builder::Level + 1;
 
 	return cmp_deeply
-		$request->http_request->request_uri,
+		$request->http_request->uri->as_string,
 		$expected,
 		"it builds expected request uri"
 		;
@@ -133,7 +133,7 @@ sub expect_request_headers {
 
 	local $Test::Builder::Level = $Test::Builder::Level + 1;
 
-	my %headers = $request->http_request->_build_request->headers->flatten;
+	my %headers = $request->http_request->headers->flatten;
 	for my $key (keys %headers) {
 		my $new_key = lc $key;
 		$new_key =~ tr/-/_/;
