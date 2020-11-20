@@ -64,12 +64,24 @@ sub expect_operation_object_acl_set {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Acl::Set',
 		plan => {
-			"set object acl" => {
+			"set object acl using acl (canned)" => {
 				act_arguments => [
 					bucket      => 'bucket-name',
 					key         => 'some-key',
 					acl         => 'private',
-					acl_short   => 'public',
+				],
+			},
+			"set object acl using acl_short (deprecated)" => {
+				act_arguments => [
+					bucket      => 'bucket-name',
+					key         => 'some-key',
+					acl_short   => 'public-read',
+				],
+			},
+			"set object acl using acl_xml" => {
+				act_arguments => [
+					bucket      => 'bucket-name',
+					key         => 'some-key',
 					acl_xml     => 'some xml placeholder',
 				],
 			},

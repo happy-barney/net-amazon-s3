@@ -75,8 +75,7 @@ sub expect_operation_bucket_create {
 			"create bucket with acl" => {
 				act_arguments => [
 					bucket    => 'bucket-name',
-					acl_short => 'private',
-					acl       => 'public',
+					acl       => 'public-read',
 				],
 			},
 		}

@@ -32,8 +32,8 @@ sub expect_operation_object_restore {
 				act_arguments => [
 					bucket      => 'bucket-name',
 					key         => 'some-key',
-					days        => 'args-days',
-					tier        => 'args-tier',
+					days        => 42,
+					tier        => 'Standard',
 				],
 			},
 		}

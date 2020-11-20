@@ -46,11 +46,21 @@ sub expect_operation_bucket_acl_set {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Acl::Set',
 		plan => {
-			"set bucket acl" => {
+			"set bucket acl using acl (canned)" => {
 				act_arguments => [
 					bucket      => 'bucket-name',
 					acl         => 'private',
-					acl_short   => 'public',
+				],
+			},
+			"set bucket acl using acl_short" => {
+				act_arguments => [
+					bucket      => 'bucket-name',
+					acl_short   => 'public-read',
+				],
+			},
+			"set bucket acl using acl_xml" => {
+				act_arguments => [
+					bucket      => 'bucket-name',
 					acl_xml     => 'some xml placeholder',
 				],
 			},

@@ -6,7 +6,7 @@ use Moose::Role;
 use Net::Amazon::S3::Constants;
 
 with 'Net::Amazon::S3::Request::Role::HTTP::Header' => {
-	name => '_copy_source',
+	name => 'copy_source',
 	header => Net::Amazon::S3::Constants->HEADER_COPY_SOURCE,
 	isa => 'Maybe[Str]',
 	required => 0,

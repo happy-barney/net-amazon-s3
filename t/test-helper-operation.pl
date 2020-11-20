@@ -49,9 +49,16 @@ sub expect_operation {
 
 			delete $args{error_handler};
 
+			my %construct = %args;
+			delete $construct{filename};
+
 			my ($ok, $stack);
 			($ok, $stack) = Test::Deep::cmp_details ($operation, $plan{expect_operation});
-			($ok, $stack) = Test::Deep::cmp_details (\%args,     $plan{expect_arguments})
+
+			my $request_class = "$plan{expect_operation}::Request";
+			my $request = $request_class->new (s3 => build_default_api, %construct);
+
+			($ok, $stack) = Test::Deep::cmp_details (\%args, $plan{expect_arguments})
 				if $ok;
 
 			diag Test::Deep::deep_diag ($stack)
@@ -83,11 +90,15 @@ sub expect_operation {
 sub expect_operation_plan {
 	my (%args) = @_;
 
+	my %expectations = map +($_ => $args{$_}), grep m/^expect_/, keys %args;
+
 	for my $implementation (sort keys %{ $args{implementations} }) {
 		my $act = $args{implementations}{$implementation};
 
 		for my $title (sort keys %{ $args{plan} }) {
-			my $plan =  $args{plan}{$title};
+			my $plan = $args{plan}{$title};
+
+			my %plan_expectations = map +($_ => $plan->{$_}), grep m/^expect_/, keys %{ $plan };
 
 			my @act_arguments = @{ $plan->{act_arguments} || [] };
 			my $expect_arguments = $plan->{expect_arguments};
@@ -105,6 +116,8 @@ sub expect_operation_plan {
 				act => sub { $act->(@act_arguments) },
 				expect_operation => $args{expect_operation},,
 				expect_arguments => $expect_arguments,
+				%expectations,
+				%plan_expectations,
 				;
 		}
 	}

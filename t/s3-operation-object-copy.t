@@ -92,7 +92,7 @@ sub expect_operation_object_copy {
 					bucket      => 'bucket-name',
 					key         => 'some-key',
 					source      => 'source-key',
-					acl_short   => 'object-acl',
+					acl_short   => 'public-read',
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -108,7 +108,7 @@ sub expect_operation_object_copy {
 					bucket      => 'bucket-name',
 					key         => 'some-key',
 					value       => '',
-					acl_short   => 'object-acl',
+					acl_short   => 'public-read',
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -133,7 +133,7 @@ sub expect_operation_object_edit_metadata {
 				act_arguments => [
 					bucket      => 'bucket-name',
 					key         => 'some-key',
-					acl_short   => 'object-acl',
+					acl_short   => 'public-read',
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
@@ -149,7 +149,7 @@ sub expect_operation_object_edit_metadata {
 					bucket      => 'bucket-name',
 					key         => 'some-key',
 					value       => '',
-					acl_short   => 'object-acl',
+					acl_short   => 'public-read',
 					encryption  => 'object-encryption',
 					headers     => {
 						expires     => 2_345_567_890,
