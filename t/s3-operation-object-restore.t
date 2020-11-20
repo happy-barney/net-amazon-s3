@@ -43,6 +43,10 @@ sub expect_operation_object_restore {
 					days        => 42,
 					tier        => 'Standard',
 				),
+				expect_request_headers => {
+					content_length => 202,
+					content_type   => 'application/xml',
+				},
 			},
 		}
 }

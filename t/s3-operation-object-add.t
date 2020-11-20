@@ -175,7 +175,7 @@ sub expect_operation_object_add_scalar {
 				act_arguments => [
 					bucket      => 'bucket-name',
 					key         => 'some-key',
-					value       => 'foo-bar-baz',
+					value       => 'baz-€',
 					acl         => 'private',
 					encryption  => 'object-encryption',
 					headers     => {
@@ -191,18 +191,20 @@ sub expect_operation_object_add_scalar {
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'some-key',
-					value       => 'foo-bar-baz',
+					value       => 'baz-€',
 					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
-					headers     => {
-						expires     => 2_345_567_890,
-						content_encoding => 'content-encoding',
-						x_amz_storage_class => 'storage-class',
-						x_amz_website_redirect_location => 'location-value',
-						x_amz_meta_foo => 'foo-value',
-						'Content-Length' => 11,
-					}
 				),
+				expect_request_headers => {
+					expires             => 2_345_567_890,
+					content_encoding    => 'content-encoding',
+					content_length      => 7, # € - 1 char but 3 bytes
+					x_amz_acl           => 'private',
+					x_amz_meta_foo      => 'foo-value',
+					x_amz_server_side_encryption => 'object-encryption',
+					x_amz_storage_class => 'storage-class',
+					x_amz_website_redirect_location => 'location-value',
+				},
 			},
 		}
 }
@@ -237,16 +239,18 @@ sub expect_operation_object_add_file {
 					value       => expect_coderef,
 					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
-					headers     => {
-						expires     => 2_345_567_890,
-						content_encoding => 'content-encoding',
-						x_amz_storage_class => 'standard',
-						x_amz_website_redirect_location => 'location-value',
-						x_amz_meta_foo => 'foo-value',
-						'Content-Length' => 72,
-						expect           => '100-continue',
-					}
 				),
+				expect_request_headers => {
+					expires             => 2_345_567_890,
+					content_encoding    => 'content-encoding',
+					content_length      => 72,
+					expect              => '100-continue',
+					x_amz_acl           => 'private',
+					x_amz_meta_foo      => 'foo-value',
+					x_amz_server_side_encryption => 'object-encryption',
+					x_amz_storage_class => 'standard',
+					x_amz_website_redirect_location => 'location-value',
+				},
 			},
 		}
 }
@@ -281,16 +285,18 @@ sub expect_operation_object_client_add_scalar {
 					value       => 'foo-bar-baz',
 					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
-					headers     => {
-						'Content-Length' => 11,
-						'Content-Type' => 'binary/octet-stream',
-						'Content-MD5'  => ignore,
-						'Content-Encoding' => 'content-encoding',
-						'Expires'            => 'Fri, 29 Apr 2044 18:38:10 GMT',
-						'x-amz-meta-foo'     => 'foo-value',
-						'x-amz-website-redirect-location' => 'location-value',
-					}
 				),
+				expect_request_headers => {
+					content_length      => 11,
+					content_type        => 'binary/octet-stream',
+					content_md5         => ignore,
+					content_encoding    => 'content-encoding',
+					expires             => 'Fri, 29 Apr 2044 18:38:10 GMT',
+					x_amz_acl           => 'private',
+					x_amz_meta_foo      => 'foo-value',
+					x_amz_server_side_encryption => 'object-encryption',
+					x_amz_website_redirect_location => 'location-value',
+				},
 			},
 		}
 }
@@ -325,16 +331,18 @@ sub expect_operation_object_client_add_file {
 					value       => expect_coderef,
 					acl         => expectation_canned_acl ('private'),
 					encryption  => 'object-encryption',
-					headers     => {
-						'Content-Length' => 72,
-						'Content-Type' => 'binary/octet-stream',
-						'Content-MD5'  => ignore,
-						'Content-Encoding' => 'content-encoding',
-						'Expires'            => 'Fri, 29 Apr 2044 18:38:10 GMT',
-						'x-amz-meta-foo'     => 'foo-value',
-						'x-amz-website-redirect-location' => 'location-value',
-					}
 				),
+				expect_request_headers => {
+					content_length      => 72,
+					content_type        => 'binary/octet-stream',
+					content_md5         => ignore,
+					content_encoding    => 'content-encoding',
+					expires             => 'Fri, 29 Apr 2044 18:38:10 GMT',
+					x_amz_acl           => 'private',
+					x_amz_meta_foo      => 'foo-value',
+					x_amz_server_side_encryption => 'object-encryption',
+					x_amz_website_redirect_location => 'location-value',
+				},
 			},
 		}
 }

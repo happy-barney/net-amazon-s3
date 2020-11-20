@@ -115,6 +115,9 @@ sub expect_operation_objects_list_api {
 					marker      => 'm',
 					prefix      => 'p',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }
@@ -140,6 +143,9 @@ sub expect_operation_objects_list_client {
 					marker      => undef,,
 					prefix      => 'p',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }

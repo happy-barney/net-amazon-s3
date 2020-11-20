@@ -47,14 +47,17 @@ sub expect_operation_bucket_tags_delete {
 		expect_operation => 'Net::Amazon::S3::Operation::Bucket::Tags::Delete',
 		expect_request_method => 'DELETE',
 		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/?tagging",
+		expect_request => methods (
+			bucket      => expectation_bucket ('bucket-name'),
+		),
+		expect_request_headers => {
+			content_length => 0,
+		},
 		plan => {
 			"delete tags from bucket" => {
 				act_arguments => [
 					bucket      => 'bucket-name',
 				],
-				expect_request => methods (
-					bucket      => expectation_bucket ('bucket-name'),
-				),
 			},
 		}
 }

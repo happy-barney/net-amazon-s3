@@ -61,6 +61,10 @@ sub expect_operation_object_upload_create {
 					encryption  => undef,
 					acl         => expectation_canned_acl ('private'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl => 'private',
+				},
 			},
 			"create upload with overloaded acl" => {
 				act_arguments => [
@@ -74,6 +78,10 @@ sub expect_operation_object_upload_create {
 					encryption  => undef,
 					acl         => expectation_canned_acl ('private'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl => 'private',
+				},
 			},
 			"create upload with acl_short" => {
 				act_arguments => [
@@ -87,6 +95,10 @@ sub expect_operation_object_upload_create {
 					encryption  => undef,
 					acl         => expectation_canned_acl ('private'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl => 'private',
+				},
 			},
 			"create upload with additional headers" => {
 				act_arguments => [
@@ -101,6 +113,10 @@ sub expect_operation_object_upload_create {
 					acl         => undef,
 					headers     => { x_amz_meta_additional => 'additional-header' },
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_meta_additional => 'additional-header',
+				},
 			},
 			"create upload with server-side encoding" => {
 				act_arguments => [
@@ -114,6 +130,10 @@ sub expect_operation_object_upload_create {
 					encryption  => 'AES256',
 					acl         => undef,
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_server_side_encryption => 'AES256',
+				},
 			},
 		}
 }

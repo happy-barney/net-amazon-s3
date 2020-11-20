@@ -57,6 +57,9 @@ sub expect_operation_object_head {
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'key-name',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }

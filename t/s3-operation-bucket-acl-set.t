@@ -57,6 +57,10 @@ sub expect_operation_bucket_acl_set {
 					bucket      => expectation_bucket ('bucket-name'),
 					acl         => expectation_canned_acl ('private'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl      => 'private',
+				},
 			},
 			"set bucket acl using acl_short" => {
 				act_arguments => [
@@ -67,6 +71,10 @@ sub expect_operation_bucket_acl_set {
 					bucket      => expectation_bucket ('bucket-name'),
 					acl         => expectation_canned_acl ('public-read'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl      => 'public-read',
+				},
 			},
 			"set bucket acl using acl_xml" => {
 				act_arguments => [
@@ -77,6 +85,10 @@ sub expect_operation_bucket_acl_set {
 					bucket      => expectation_bucket ('bucket-name'),
 					acl_xml     => 'some xml placeholder',
 				),
+				expect_request_headers => {
+					content_length => 20,
+					content_type   => 'application/xml',
+				},
 			},
 		}
 }

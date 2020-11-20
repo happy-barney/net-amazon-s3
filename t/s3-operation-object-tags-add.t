@@ -48,6 +48,10 @@ sub expect_operation_object_tags_set {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Tags::Add',
 		expect_request_method => 'PUT',
+		expect_request_headers => {
+			content_length => 167,
+			content_type   => 'application/xml',
+		},
 		plan => {
 			"set tags on object" => {
 				act_arguments => [

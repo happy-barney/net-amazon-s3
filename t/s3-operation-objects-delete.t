@@ -50,6 +50,10 @@ sub expect_operation_objects_delete {
 					bucket      => expectation_bucket ('bucket-name'),
 					keys        => [ 'key-1', 'key-2', 'key-3' ],
 				),
+				expect_request_headers => {
+					content_length => 223,
+					content_type   => 'application/xml',
+				},
 			},
 		}
 }

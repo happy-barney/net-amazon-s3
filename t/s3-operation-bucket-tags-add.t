@@ -57,6 +57,10 @@ sub expect_operation_bucket_tags_set {
 					bucket      => expectation_bucket ('bucket-name'),
 					tags        => { foo => 'bar' },
 				),
+				expect_request_headers => {
+					content_length => 167,
+					content_type   => 'application/xml',
+				},
 			},
 		}
 }

@@ -80,20 +80,46 @@ sub expect_operation {
 
 			my ($ok, $stack);
 			($ok, $stack) = Test::Deep::cmp_details ($operation, $plan{expect_operation});
+			diag ("operation expectation failed") unless $ok;
 
 			my $request_class = "$plan{expect_operation}::Request";
 			my $request = $request_class->new (s3 => build_default_api, %construct);
 			# HTTP::Request but unsigned
-			my $raw_request = $request->_build_signed_request->_build_request;
+			my $guard = Sub::Override->new (
+				'Net::Amazon::S3::Request::_build_http_request' => sub {
+					my ($self, %params) = @_;
 
-			($ok, $stack) = Test::Deep::cmp_details ($raw_request->method, $plan{expect_request_method})
-				if $ok;
+					return $self->_build_signed_request( %params )->_build_request;
+				},
+			);
+			my $raw_request = $request->http_request;
 
-			($ok, $stack) = Test::Deep::cmp_details ($raw_request->uri->as_string, $plan{expect_request_uri})
-				if $ok;
+			if ($ok) {
+				($ok, $stack) = Test::Deep::cmp_details ($raw_request->method, $plan{expect_request_method});
+				diag ("request method expectation failed") unless $ok;
+			}
 
-			($ok, $stack) = Test::Deep::cmp_details ($request, $plan{expect_request})
-				if $ok && $plan{expect_request};
+			if ($ok) {
+				($ok, $stack) = Test::Deep::cmp_details ($raw_request->uri->as_string, $plan{expect_request_uri});
+				diag ("request uri expectation failed") unless $ok;
+			}
+
+			if ($ok && $plan{expect_request_headers}) {
+				my %headers = $raw_request->headers->flatten;
+				for my $key (keys %headers) {
+					my $new_key = lc $key;
+					$new_key =~ tr/-/_/;
+					$headers{$new_key} = delete $headers{$key};
+				}
+
+				($ok, $stack) = Test::Deep::cmp_details (\%headers, $plan{expect_request_headers});
+				diag ("request headers expectation failed") unless $ok;
+			}
+
+			if ($ok && $plan{expect_request}) {
+				($ok, $stack) = Test::Deep::cmp_details ($request, $plan{expect_request});
+				diag ("request instance expectation failed") unless $ok;
+			}
 
 			diag Test::Deep::deep_diag ($stack)
 				unless ok $title, got => $ok;

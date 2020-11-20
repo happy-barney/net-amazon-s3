@@ -8,16 +8,17 @@ use Carp ();
 
 extends 'Net::Amazon::S3::Request::Bucket';
 
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::PUT';
 with 'Net::Amazon::S3::Request::Role::HTTP::Header::ACL';
+with 'Net::Amazon::S3::Request::Role::Query::Action::Acl';
+with 'Net::Amazon::S3::Request::Role::XML::Content';
+
 
 has 'acl_xml'   => (
 	is => 'ro',
 	isa => 'Maybe[Str]',
 	required => 0,
 );
-
-with 'Net::Amazon::S3::Request::Role::Query::Action::Acl';
-with 'Net::Amazon::S3::Request::Role::HTTP::Method::PUT';
 
 __PACKAGE__->meta->make_immutable;
 

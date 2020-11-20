@@ -88,6 +88,7 @@ sub _build_request {
 	my $http_headers = $self->_merge_meta( $headers, $metadata );
 	my $uri          = $self->request_uri;
 
+	$http_headers->remove_header ('content_type') unless $content;
 	my $http_request = HTTP::Request->new( $method, $uri, $http_headers, $content );
 	$http_request->content_length (0) unless $http_request->content_length;
 

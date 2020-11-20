@@ -48,6 +48,9 @@ sub expect_operation_object_tags_delete {
 		implementations => +{ @_ },
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Tags::Delete',
 		expect_request_method => 'DELETE',
+		expect_request_headers => {
+			content_length => 0,
+		},
 		plan => {
 			"delete tags from object" => {
 				act_arguments => [

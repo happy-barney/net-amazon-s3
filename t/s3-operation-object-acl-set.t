@@ -78,6 +78,10 @@ sub expect_operation_object_acl_set {
 					acl         => expectation_canned_acl ('private'),
 					acl_xml     => undef,
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl      => 'private',
+				},
 			},
 			"set object acl using acl_short (deprecated)" => {
 				act_arguments => [
@@ -91,6 +95,10 @@ sub expect_operation_object_acl_set {
 					acl         => expectation_canned_acl ('public-read'),
 					acl_xml     => undef,
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl      => 'public-read',
+				},
 			},
 			"set object acl using acl_xml" => {
 				act_arguments => [
@@ -104,6 +112,10 @@ sub expect_operation_object_acl_set {
 					acl         => undef,
 					acl_xml     => 'some xml placeholder',
 				),
+				expect_request_headers => {
+					content_length => 20,
+					content_type   => 'application/xml',
+				},
 			},
 		}
 }

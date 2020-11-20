@@ -112,16 +112,19 @@ sub expect_operation_object_copy {
 					value       => '',
 					acl         => expectation_canned_acl ('public-read'),
 					encryption  => 'object-encryption',
-					headers     => {
-						expires     => 2_345_567_890,
-						content_encoding => 'content-encoding',
-						x_amz_storage_class => 'storage-class',
-						x_amz_website_redirect_location => 'location-value',
-						x_amz_meta_foo => 'foo-value',
-						'x-amz-metadata-directive' => 'REPLACE',
-						'x-amz-copy-source'        => 'source-key',
-					}
 				),
+				expect_request_headers => {
+					content_encoding    => 'content-encoding',
+					content_length      => 0,
+					expires             => 2_345_567_890,
+					x_amz_acl           => 'public-read',
+					x_amz_copy_source   => 'source-key',
+					x_amz_meta_foo      => 'foo-value',
+					x_amz_metadata_directive => 'REPLACE',
+					x_amz_server_side_encryption => 'object-encryption',
+					x_amz_storage_class => 'storage-class',
+					x_amz_website_redirect_location => 'location-value',
+				},
 			},
 		}
 }
@@ -155,16 +158,19 @@ sub expect_operation_object_edit_metadata {
 					value       => '',
 					acl         => expectation_canned_acl ('public-read'),
 					encryption  => 'object-encryption',
-					headers     => {
-						expires     => 2_345_567_890,
-						content_encoding => 'content-encoding',
-						x_amz_storage_class => 'storage-class',
-						x_amz_website_redirect_location => 'location-value',
-						x_amz_meta_foo => 'foo-value',
-						'x-amz-metadata-directive' => 'REPLACE',
-						'x-amz-copy-source'        => '/bucket-name/some-key',
-					}
 				),
+				expect_request_headers => {
+					content_encoding    => 'content-encoding',
+					content_length      => 0,
+					expires             => 2_345_567_890,
+					x_amz_acl           => 'public-read',
+					x_amz_copy_source   => '/bucket-name/some-key',
+					x_amz_meta_foo      => 'foo-value',
+					x_amz_metadata_directive => 'REPLACE',
+					x_amz_server_side_encryption => 'object-encryption',
+					x_amz_storage_class => 'storage-class',
+					x_amz_website_redirect_location => 'location-value',
+				},
 			},
 		}
 }

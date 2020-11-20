@@ -47,6 +47,9 @@ sub expect_operation_object_acl_fetch {
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Acl::Fetch',
 		expect_request_method => 'GET',
 		expect_request_uri    => "https://bucket-name.${ \ default_hostname }/key-name?acl",
+		expect_request_headers => {
+			content_length => 0,
+		},
 		plan => {
 			"fetch object acl" => {
 				act_arguments => [

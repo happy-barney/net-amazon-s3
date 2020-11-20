@@ -54,6 +54,10 @@ sub expect_operation_object_upload_complete {
 					etags       => [ 'etag-1', 'etag-2' ],
 					part_numbers => [ 1, 2 ],
 				),
+				expect_request_headers => {
+					content_length => 255,
+					content_type   => 'application/xml',
+				},
 			},
 		}
 }

@@ -50,6 +50,9 @@ sub expect_operation_object_upload_abort {
 					key         => 'some-key',
 					upload_id   => 42,
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }

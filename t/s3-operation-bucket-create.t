@@ -70,6 +70,9 @@ sub expect_operation_bucket_create {
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 			"create bucket with location constraint" => {
 				act_arguments => [
@@ -80,6 +83,10 @@ sub expect_operation_bucket_create {
 					bucket      => expectation_bucket ('bucket-name'),
 					location_constraint => 'eu-west-1',
 				),
+				expect_request_headers => {
+					content_length => 193,
+					content_type => 'application/xml',
+				},
 			},
 			"create bucket with acl" => {
 				act_arguments => [
@@ -90,6 +97,10 @@ sub expect_operation_bucket_create {
 					bucket      => expectation_bucket ('bucket-name'),
 					acl         => expectation_canned_acl ('public-read'),
 				),
+				expect_request_headers => {
+					content_length => 0,
+					x_amz_acl      => 'public-read',
+				},
 			},
 		}
 }

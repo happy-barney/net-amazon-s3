@@ -194,6 +194,9 @@ sub expect_operation_object_fetch {
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'key-name',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }
@@ -214,6 +217,9 @@ sub expect_operation_object_fetch_content {
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'key-name',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }
@@ -236,6 +242,9 @@ sub expect_operation_object_fetch_filename {
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'key-name',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }
@@ -258,6 +267,9 @@ sub expect_operation_object_fetch_callback {
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'key-name',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }
@@ -279,6 +291,9 @@ sub expect_operation_object_head {
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => 'key-name',
 				),
+				expect_request_headers => {
+					content_length => 0,
+				},
 			},
 		}
 }

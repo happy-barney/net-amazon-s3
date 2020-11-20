@@ -56,11 +56,12 @@ sub expect_operation_object_upload_part {
 					upload_id   => 42,
 					part_number => 1,
 					copy_source => 'source-key',
-					headers     => {
-						x_amz_meta_additional => 'additional-header',
-						'Content-Length' => 11,
-					},
 				),
+				expect_request_headers => {
+					content_length      => 11,
+					x_amz_copy_source   => 'source-key',
+					x_amz_meta_additional => 'additional-header',
+				},
 			},
 		}
 }
