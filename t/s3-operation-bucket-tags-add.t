@@ -6,6 +6,7 @@ use warnings;
 use FindBin;
 
 BEGIN { require "$FindBin::Bin/test-helper-operation.pl" }
+BEGIN { require "$FindBin::Bin/test-helper-tags.pl" }
 
 expect_operation_bucket_tags_set (
 	'API / legacy'  => \& api_bucket_tags_set_legacy,
@@ -51,16 +52,17 @@ sub expect_operation_bucket_tags_set {
 			"set tags on bucket" => {
 				act_arguments => [
 					bucket      => default_bucket_name,
-					tags        => { foo => 'bar' },
+					tags        => fixture_tags_foo_bar_hashref,
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					tags        => { foo => 'bar' },
+					tags        => fixture_tags_foo_bar_hashref,
 				),
 				expect_request_headers => {
-					content_length => 167,
+					content_length => 210,
 					content_type   => 'application/xml',
 				},
+				expect_request_content_xml => fixture_tags_foo_bar_xml,
 			},
 		}
 }

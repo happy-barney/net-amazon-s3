@@ -47,6 +47,15 @@ sub expect_operation_object_restore {
 					content_length => 202,
 					content_type   => 'application/xml',
 				},
+				expect_request_content_xml => <<'EOXML',
+<?xml version="1.0" encoding="utf-8"?>
+<RestoreRequest xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+	<Days>42</Days>
+	<GlacierJobParameters>
+		<Tier>Standard</Tier>
+	</GlacierJobParameters>
+</RestoreRequest>
+EOXML
 			},
 		}
 }

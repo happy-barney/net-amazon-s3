@@ -182,6 +182,23 @@ sub _expectation_request_instance {
 		;
 }
 
+sub _expectation_request_content_xml {
+	my ($title, %args) = @_;
+
+	require Shared::Examples::Net::Amazon::S3::Request;
+
+	return 1 unless $args{expect};
+
+	my $got    = Shared::Examples::Net::Amazon::S3::Request::_canonical_xml ($args{raw_request}->content);
+	my $expect = Shared::Examples::Net::Amazon::S3::Request::_canonical_xml ($args{expect});
+
+	return _expectation
+		$title,
+		"Request content XML expectation",
+		Test::Deep::cmp_details ($got, $expect),
+		;
+}
+
 sub expect_operation {
 	my ($title, %plan) = @_;
 
@@ -213,6 +230,11 @@ sub expect_operation {
 				return unless _expectation_request_headers      $title =>
 					raw_request => $raw_request,
 					expect      => $plan{expect_request_headers},
+					;
+
+				return unless _expectation_request_content_xml  $title =>
+					raw_request => $raw_request,
+					expect      => $plan{expect_request_content_xml},
 					;
 
 				return unless _expectation_request_instance $title =>

@@ -77,16 +77,17 @@ sub expect_operation_bucket_create {
 			"create bucket with location constraint" => {
 				act_arguments => [
 					bucket => default_bucket_name,
-					location_constraint => 'eu-west-1',
+					location_constraint => 'ca-central-1',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
-					location_constraint => 'eu-west-1',
+					location_constraint => 'ca-central-1',
 				),
 				expect_request_headers => {
-					content_length => 193,
+					content_length => 196,
 					content_type => 'application/xml',
 				},
+				expect_request_content_xml  => Shared::Examples::Net::Amazon::S3::fixture ('request::bucket_create_ca_central_1')->{content},
 			},
 			"create bucket with acl" => {
 				act_arguments => [

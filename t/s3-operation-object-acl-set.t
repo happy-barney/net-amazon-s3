@@ -104,18 +104,19 @@ sub expect_operation_object_acl_set {
 				act_arguments => [
 					bucket      => default_bucket_name,
 					key         => default_object_name,
-					acl_xml     => 'some xml placeholder',
+					acl_xml     => '<?xml version="1.0"?><some-xml-placeholder/>',
 				],
 				expect_request => methods (
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => default_object_name,
 					acl         => undef,
-					acl_xml     => 'some xml placeholder',
+					acl_xml     => '<?xml version="1.0"?><some-xml-placeholder/>',
 				),
 				expect_request_headers => {
-					content_length => 20,
+					content_length => 44,
 					content_type   => 'application/xml',
 				},
+				expect_request_content_xml => '<?xml version="1.0"?><some-xml-placeholder/>',
 			},
 		}
 }

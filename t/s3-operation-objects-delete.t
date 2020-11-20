@@ -54,6 +54,14 @@ sub expect_operation_objects_delete {
 					content_length => 223,
 					content_type   => 'application/xml',
 				},
+				expect_request_content_xml => <<'EOXML',
+<Delete xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+	<Quiet>true</Quiet>
+	<Object><Key>key-1</Key></Object>
+	<Object><Key>key-2</Key></Object>
+	<Object><Key>key-3</Key></Object>
+</Delete>
+EOXML
 			},
 		}
 }

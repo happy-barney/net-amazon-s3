@@ -6,6 +6,7 @@ use warnings;
 use FindBin;
 
 BEGIN { require "$FindBin::Bin/test-helper-operation.pl" }
+BEGIN { require "$FindBin::Bin/test-helper-tags.pl" }
 
 plan tests => 7;
 
@@ -49,7 +50,7 @@ sub expect_operation_object_tags_set {
 		expect_operation => 'Net::Amazon::S3::Operation::Object::Tags::Add',
 		expect_request_method => 'PUT',
 		expect_request_headers => {
-			content_length => 167,
+			content_length => 210,
 			content_type   => 'application/xml',
 		},
 		plan => {
@@ -57,29 +58,31 @@ sub expect_operation_object_tags_set {
 				act_arguments => [
 					bucket      => default_bucket_name,
 					key         => default_object_name,
-					tags        => { foo => 'bar' },
+					tags        => fixture_tags_foo_bar_hashref,
 				],
 				expect_request_uri  => default_object_uri . "?tagging",
 				expect_request      => methods (
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => default_object_name,
-					tags        => { foo => 'bar' },
+					tags        => fixture_tags_foo_bar_hashref,
 				),
+				expect_request_content_xml => fixture_tags_foo_bar_xml,
 			},
 			"set tags on object version" => {
 				act_arguments => [
 					bucket      => default_bucket_name,
 					key         => default_object_name,
 					version_id  => 'foo',
-					tags        => { foo => 'bar' },
+					tags        => fixture_tags_foo_bar_hashref,
 				],
 				expect_request_uri  => default_object_uri . "?tagging&versionId=foo",
 				expect_request      => methods (
 					bucket      => expectation_bucket ('bucket-name'),
 					key         => default_object_name,
 					version_id  => 'foo',
-					tags        => { foo => 'bar' },
+					tags        => fixture_tags_foo_bar_hashref,
 				),
+				expect_request_content_xml => fixture_tags_foo_bar_xml,
 			},
 		}
 }

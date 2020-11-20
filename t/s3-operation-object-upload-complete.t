@@ -58,6 +58,19 @@ sub expect_operation_object_upload_complete {
 					content_length => 255,
 					content_type   => 'application/xml',
 				},
+				expect_request_content_xml => <<'EOXML',
+<?xml version="1.0" encoding="utf-8"?>
+<CompleteMultipartUpload xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+	<Part>
+		<PartNumber>1</PartNumber>
+		<ETag>etag-1</ETag>
+	</Part>
+	<Part>
+		<PartNumber>2</PartNumber>
+		<ETag>etag-2</ETag>
+	</Part>
+</CompleteMultipartUpload>
+EOXML
 			},
 		}
 }
