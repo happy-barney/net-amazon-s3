@@ -171,16 +171,29 @@ sub _expectation_request_uri {
 		;
 }
 
+sub _http_headers_for_test {
+	my ($http_message) = @_;
+
+	my %headers = $http_message->headers->flatten;
+	for my $key (keys %headers) {
+		(my $new_key = lc $key) =~ tr/-/_/;
+		$headers{$new_key} = delete $headers{$key};
+	}
+
+	return %headers;
+}
+
 sub _expectation_request_headers {
 	my ($title, %args) = @_;
 
 	return 1 unless $args{expect};
 
-	my %headers = $args{raw_request}->headers->flatten;
-	for my $key (keys %headers) {
-		my $new_key = lc $key;
-		$new_key =~ tr/-/_/;
-		$headers{$new_key} = delete $headers{$key};
+	my %headers = _http_headers_for_test ($args{raw_request});
+
+	unless ($args{expect}->$Safe::Isa::_isa ('Test::Deep::Cmp')) {
+		for my $key (qw[ content_type content_length authorization date ]) {
+			delete $headers{$key} unless exists $args{expect}->{$key};
+		}
 	}
 
 	return _expectation
